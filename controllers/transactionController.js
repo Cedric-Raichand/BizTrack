@@ -84,9 +84,17 @@ const getTransactions = async(req,res)=>{
 };
 
 //Get single transaction
+const mongoose = require("mongoose");
 const getTransactionById = async (req, res) => {
 
   try {
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: "Invalid transaction ID"
+      });
+    }
+
 
     const transaction = await Transaction.findById(req.params.id);
 
