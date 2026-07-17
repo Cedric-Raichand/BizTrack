@@ -54,26 +54,54 @@ const addTransaction = async (req, res) => {
 
 
 // Get all transactions
-const getTransactions = async(req,res)=>{
+const getTransactions = async (req, res) => {
 
-  try{
+  try {
 
     const business = await Business.findOne({
-      owner:req.user.id
+      owner: req.user.id
     });
 
 
-    const transactions = await Transaction.find({
-      business:business._id
-    }).sort({
-      createdAt:-1
+    if (!business) {
+      return res.status(404).json({
+        message: "Business not found"
+      });
+    }
+
+
+    const { type, page = 1, limit = 10 } = req.query;
+
+
+    let filter = {
+      business: business._id
+    };
+
+
+    // Filter income or expense
+    if (type) {
+      filter.type = type;
+    }
+
+
+    const transactions = await Transaction.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+
+    const total = await Transaction.countDocuments(filter);
+
+
+    res.json({
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / limit),
+      transactions
     });
 
 
-    res.json(transactions);
-
-
-  }catch(error){
+  } catch(error){
 
     res.status(500).json({
       message:error.message
@@ -82,7 +110,6 @@ const getTransactions = async(req,res)=>{
   }
 
 };
-
 //Get single transaction
 const mongoose = require("mongoose");
 const getTransactionById = async (req, res) => {
