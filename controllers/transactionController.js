@@ -83,8 +83,117 @@ const getTransactions = async(req,res)=>{
 
 };
 
+//Get single transaction
+const getTransactionById = async (req, res) => {
 
-module.exports={
+  try {
+
+    const transaction = await Transaction.findById(req.params.id);
+
+
+    if (!transaction) {
+      return res.status(404).json({
+        message: "Transaction not found"
+      });
+    }
+
+
+    res.json(transaction);
+
+
+  } catch(error){
+
+    res.status(500).json({
+      message:error.message
+    });
+
+  }
+
+};
+//Update transaction
+const updateTransaction = async (req, res) => {
+
+  try {
+
+    const transaction = await Transaction.findById(req.params.id);
+
+
+    if (!transaction) {
+      return res.status(404).json({
+        message:"Transaction not found"
+      });
+    }
+
+
+    const updatedTransaction =
+      await Transaction.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new:true
+        }
+      );
+
+
+    res.json({
+      message:"Transaction updated successfully",
+      transaction: updatedTransaction
+    });
+
+
+  } catch(error){
+
+    res.status(500).json({
+      message:error.message
+    });
+
+  }
+
+};
+
+//Delete transaction
+const deleteTransaction = async (req,res)=>{
+
+  try{
+
+    const transaction =
+      await Transaction.findById(req.params.id);
+
+
+    if(!transaction){
+      return res.status(404).json({
+        message:"Transaction not found"
+      });
+    }
+
+
+    await transaction.deleteOne();
+
+
+    res.json({
+      message:"Transaction deleted successfully"
+    });
+
+
+  }catch(error){
+
+    res.status(500).json({
+      message:error.message
+    });
+
+  }
+
+};
+
+
+
+
+
+
+module.exports = {
   addTransaction,
   getTransactions,
+  getTransactionById,
+  updateTransaction,
+  deleteTransaction
 };
