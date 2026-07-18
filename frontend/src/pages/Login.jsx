@@ -1,8 +1,12 @@
 import { useState } from "react";
 import API from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 
 function Login() {
+
+  const { login } = useAuth();
+
 
   const [formData, setFormData] = useState({
     email: "",
@@ -10,16 +14,22 @@ function Login() {
   });
 
 
+
   const handleChange = (e) => {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+
   };
 
 
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
+
 
     try {
 
@@ -32,9 +42,9 @@ function Login() {
       console.log(response.data);
 
 
-      // store token
-      localStorage.setItem(
-        "token",
+      // Save user and token through AuthContext
+      login(
+        response.data.user,
         response.data.token
       );
 
@@ -42,17 +52,24 @@ function Login() {
       alert("Login successful");
 
 
-    } catch(error) {
+    } catch (error) {
 
       console.log(error.response?.data);
 
-      alert("Login failed");
+
+      alert(
+        error.response?.data?.message ||
+        "Login failed"
+      );
 
     }
+
   };
 
 
+
   return (
+
     <div>
 
       <h1>Login</h1>
@@ -60,30 +77,37 @@ function Login() {
 
       <form onSubmit={handleSubmit}>
 
+
         <input
+          type="email"
           name="email"
           placeholder="Email"
+          value={formData.email}
           onChange={handleChange}
         />
 
 
         <input
-          name="password"
           type="password"
+          name="password"
           placeholder="Password"
+          value={formData.password}
           onChange={handleChange}
         />
 
 
-        <button>
+        <button type="submit">
           Login
         </button>
 
 
       </form>
 
+
     </div>
+
   );
+
 }
 
 
