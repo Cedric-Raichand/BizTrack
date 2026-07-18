@@ -1,10 +1,34 @@
-function Dashboard() {
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Your business overview will appear here.</p>
-    </div>
-  );
+import { useAuth } from "../context/AuthContext";
+
+
+const Dashboard = ()=>{
+
+    const {user,logout} = useAuth();
+
+
+    return(
+
+        <div>
+
+            <h1>
+                Welcome {user?.name}
+            </h1>
+
+            <p>
+                Email: {user?.email}
+            </p>
+
+
+            <button onClick={logout}>
+                Logout
+            </button>
+
+
+        </div>
+
+    )
+
 }
+
 
 export default Dashboard;
