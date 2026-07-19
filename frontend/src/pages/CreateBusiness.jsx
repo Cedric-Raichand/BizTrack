@@ -10,22 +10,24 @@ const CreateBusiness = () => {
 
 
   const [formData, setFormData] = useState({
+
     businessName: "",
     category: "",
     description: "",
     location: ""
+
   });
-
-
-  const [error, setError] = useState("");
 
 
 
   const handleChange = (e) => {
 
     setFormData({
+
       ...formData,
+
       [e.target.name]: e.target.value
+
     });
 
   };
@@ -45,13 +47,10 @@ const CreateBusiness = () => {
       navigate("/dashboard");
 
 
-    } catch(error){
+    } catch(error) {
 
-      console.log(error);
-
-      setError(
-        error.response?.data?.message ||
-        "Business creation failed"
+      console.log(
+        error.response?.data || error.message
       );
 
     }
@@ -64,67 +63,45 @@ const CreateBusiness = () => {
 
     <div>
 
-      <h1>Create Business</h1>
 
-
-      {
-        error && 
-        <p>{error}</p>
-      }
+      <h1>
+        Create Business
+      </h1>
 
 
       <form onSubmit={handleSubmit}>
 
 
         <input
-          type="text"
           name="businessName"
-          placeholder="Business Name"
-          value={formData.businessName}
+          placeholder="Business name"
           onChange={handleChange}
         />
-
-
-        <br />
 
 
         <input
-          type="text"
           name="category"
           placeholder="Category"
-          value={formData.category}
           onChange={handleChange}
         />
 
 
-        <br />
+        <input
+          name="location"
+          placeholder="Location"
+          onChange={handleChange}
+        />
 
 
         <textarea
           name="description"
           placeholder="Description"
-          value={formData.description}
           onChange={handleChange}
         />
-
-
-        <br />
-
-
-        <input
-          type="text"
-          name="location"
-          placeholder="Location"
-          value={formData.location}
-          onChange={handleChange}
-        />
-
-
-        <br />
 
 
         <button type="submit">
-          Create Business
+          Create
         </button>
 
 
