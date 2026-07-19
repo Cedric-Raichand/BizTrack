@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+import CreateBusiness from "../pages/CreateBusiness";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -13,22 +14,45 @@ const AppRoutes = () => {
 
     <Routes>
 
-      {/* Default route */}
-      <Route path="/" element={<Login />} />
+
+      {/* Default page */}
+      <Route 
+        path="/" 
+        element={<Login />} 
+      />
 
 
       {/* Public routes */}
-      <Route path="/login" element={<Login />} />
+      <Route 
+        path="/login" 
+        element={<Login />} 
+      />
 
-      <Route path="/register" element={<Register />} />
+
+      <Route 
+        path="/register" 
+        element={<Register />} 
+      />
+
 
 
       {/* Protected routes */}
+
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+
+      <Route
+        path="/create-business"
+        element={
+          <ProtectedRoute>
+            <CreateBusiness />
           </ProtectedRoute>
         }
       />

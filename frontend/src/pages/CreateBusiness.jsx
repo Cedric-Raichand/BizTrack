@@ -1,53 +1,92 @@
 import { useState } from "react";
-import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
+
 
 const CreateBusiness = () => {
+
+
   const navigate = useNavigate();
+
 
   const [formData, setFormData] = useState({
     businessName: "",
     category: "",
     description: "",
-    location: "",
+    location: ""
   });
 
+
+  const [error, setError] = useState("");
+
+
+
   const handleChange = (e) => {
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
+
   };
+
+
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
+
     try {
+
       await API.post("/business", formData);
 
-      alert("Business created successfully!");
 
       navigate("/dashboard");
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to create business");
+
+
+    } catch(error){
+
+      console.log(error);
+
+      setError(
+        error.response?.data?.message ||
+        "Business creation failed"
+      );
+
     }
+
   };
 
+
+
   return (
+
     <div>
-      <h1>Create Your Business</h1>
+
+      <h1>Create Business</h1>
+
+
+      {
+        error && 
+        <p>{error}</p>
+      }
+
 
       <form onSubmit={handleSubmit}>
+
+
         <input
           type="text"
           name="businessName"
           placeholder="Business Name"
           value={formData.businessName}
           onChange={handleChange}
-          required
         />
 
-        <br /><br />
+
+        <br />
+
 
         <input
           type="text"
@@ -55,10 +94,11 @@ const CreateBusiness = () => {
           placeholder="Category"
           value={formData.category}
           onChange={handleChange}
-          required
         />
 
-        <br /><br />
+
+        <br />
+
 
         <textarea
           name="description"
@@ -67,7 +107,9 @@ const CreateBusiness = () => {
           onChange={handleChange}
         />
 
-        <br /><br />
+
+        <br />
+
 
         <input
           type="text"
@@ -77,14 +119,23 @@ const CreateBusiness = () => {
           onChange={handleChange}
         />
 
-        <br /><br />
+
+        <br />
+
 
         <button type="submit">
           Create Business
         </button>
+
+
       </form>
+
+
     </div>
+
   );
+
 };
+
 
 export default CreateBusiness;

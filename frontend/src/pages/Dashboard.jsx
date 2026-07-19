@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
 
 
 const Dashboard = () => {
 
+
   const { user, logout } = useAuth();
 
+  const navigate = useNavigate();
+
+
   const [business, setBusiness] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
 
 
   useEffect(() => {
@@ -16,23 +24,33 @@ const Dashboard = () => {
 
     const fetchBusiness = async () => {
 
+
       try {
 
+
         const response = await API.get("/business");
+
 
         setBusiness(response.data);
 
 
+
       } catch(error){
 
-        console.log(error.response?.data || error.message);
 
-      }
-      finally{
+        console.log(
+          error.response?.data || error.message
+        );
+
+
+      } finally {
+
 
         setLoading(false);
 
+
       }
+
 
     };
 
@@ -44,11 +62,17 @@ const Dashboard = () => {
 
 
 
+
   if(loading){
 
-    return <h2>Loading dashboard...</h2>;
+    return (
+      <h2>
+        Loading dashboard...
+      </h2>
+    );
 
   }
+
 
 
 
@@ -58,7 +82,7 @@ const Dashboard = () => {
 
 
       <h1>
-        Welcome, {user?.name}
+        Welcome {user?.name}
       </h1>
 
 
@@ -76,8 +100,10 @@ const Dashboard = () => {
 
 
 
+
       {
         business ?
+
 
         (
 
@@ -99,7 +125,7 @@ const Dashboard = () => {
 
 
             <p>
-              {business.description}
+              Description: {business.description}
             </p>
 
 
@@ -108,7 +134,9 @@ const Dashboard = () => {
 
         )
 
+
         :
+
 
         (
 
@@ -119,12 +147,15 @@ const Dashboard = () => {
             </p>
 
 
-            <button>
+            <button
+              onClick={() => navigate("/create-business")}
+            >
               Create Business
             </button>
 
 
           </div>
+
 
         )
 
