@@ -1,34 +1,65 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import API from "../api/axios";
 
+const Dashboard = () => {
 
-const Dashboard = ()=>{
+  const { user, logout } = useAuth();
 
-    const {user,logout} = useAuth();
+  const [business, setBusiness] = useState(null);
 
+  useEffect(() => {
 
-    return(
+    const fetchBusiness = async () => {
 
-        <div>
+      try {
 
-            <h1>
-                Welcome {user?.name}
-            </h1>
+        const res = await API.get("/business");
 
-            <p>
-                Email: {user?.email}
-            </p>
+        setBusiness(res.data);
 
+      } catch (error) {
 
-            <button onClick={logout}>
-                Logout
-            </button>
+        console.log(error);
 
+      }
 
-        </div>
+    };
 
-    )
+    fetchBusiness();
 
-}
+  }, []);
 
+  return (
+
+    <div>
+
+      <h1>Welcome {user?.name}</h1>
+
+      <p>{user?.email}</p>
+
+      <hr />
+
+      <h2>Business Information</h2>
+
+      {business ? (
+
+        <pre>{JSON.stringify(business, null, 2)}</pre>
+
+      ) : (
+
+        <p>No business found.</p>
+
+      )}
+
+      <button onClick={logout}>
+        Logout
+      </button>
+
+    </div>
+
+  );
+
+};
 
 export default Dashboard;

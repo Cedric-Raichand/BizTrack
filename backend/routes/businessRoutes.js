@@ -1,19 +1,15 @@
 const express = require("express");
-
-const protect = require("../middleware/authMiddleware");
+const router = express.Router();
 
 const {
   createBusiness,
-  getMyBusiness,
+  getBusiness,
 } = require("../controllers/businessController");
 
-
-const router = express.Router();
-
+const protect = require("../middleware/authMiddleware");
 
 router.post("/", protect, createBusiness);
 
-router.get("/", protect, getMyBusiness);
-
+router.get("/", protect, getBusiness);
 
 module.exports = router;
