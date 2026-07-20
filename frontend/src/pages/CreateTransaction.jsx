@@ -2,18 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
-const CreateTransaction = () => {
+function CreateTransaction() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    type: "income",
     title: "",
     amount: "",
-    type: "income",
     category: "",
-    date: "",
+    description: "",
   });
-
-  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -28,13 +26,14 @@ const CreateTransaction = () => {
     try {
       await API.post("/transactions", formData);
 
-      alert("Transaction added successfully");
+      alert("Transaction added successfully!");
 
       navigate("/dashboard");
+
     } catch (error) {
-      setError(
+      alert(
         error.response?.data?.message ||
-          "Failed to add transaction"
+        "Failed to add transaction"
       );
     }
   };
@@ -43,28 +42,7 @@ const CreateTransaction = () => {
     <div>
       <h1>Add Transaction</h1>
 
-      {error && <p>{error}</p>}
-
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={formData.title}
-          onChange={handleChange}
-        />
-
-        <br />
-
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={formData.amount}
-          onChange={handleChange}
-        />
-
-        <br />
 
         <select
           name="type"
@@ -75,7 +53,27 @@ const CreateTransaction = () => {
           <option value="expense">Expense</option>
         </select>
 
-        <br />
+        <br /><br />
+
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          value={formData.title}
+          onChange={handleChange}
+        />
+
+        <br /><br />
+
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount"
+          value={formData.amount}
+          onChange={handleChange}
+        />
+
+        <br /><br />
 
         <input
           type="text"
@@ -85,23 +83,24 @@ const CreateTransaction = () => {
           onChange={handleChange}
         />
 
-        <br />
+        <br /><br />
 
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={formData.description}
           onChange={handleChange}
         />
 
-        <br />
+        <br /><br />
 
         <button type="submit">
           Save Transaction
         </button>
+
       </form>
     </div>
   );
-};
+}
 
 export default CreateTransaction;
