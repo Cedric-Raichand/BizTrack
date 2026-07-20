@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
+import SummaryCard from "../components/SummaryCard";
 
 
 function Dashboard() {
@@ -217,8 +218,30 @@ function Dashboard() {
 
 
       <h2>
-        Financial Summary
+       Financial Summary
       </h2>
+
+
+     <div>
+
+      <SummaryCard
+     title="Total Income"
+     value={totalIncome}
+     />
+
+
+   <SummaryCard
+    title="Total Expenses"
+    value={totalExpense}
+   />
+
+
+   <SummaryCard
+    title="Balance"
+    value={balance}
+   />
+
+   </div>
 
 
       <div>
