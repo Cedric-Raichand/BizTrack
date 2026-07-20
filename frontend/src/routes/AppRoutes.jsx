@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import CreateBusiness from "../pages/CreateBusiness";
 import CreateTransaction from "../pages/CreateTransaction";
+import EditTransaction from "../pages/EditTransaction";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -49,6 +50,7 @@ const AppRoutes = () => {
       />
 
 
+
       <Route
         path="/create-business"
         element={
@@ -59,11 +61,23 @@ const AppRoutes = () => {
       />
 
 
+
       <Route
         path="/create-transaction"
         element={
           <ProtectedRoute>
             <CreateTransaction />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+      <Route
+        path="/edit-transaction/:id"
+        element={
+          <ProtectedRoute>
+            <EditTransaction />
           </ProtectedRoute>
         }
       />

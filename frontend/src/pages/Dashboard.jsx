@@ -8,7 +8,9 @@ function Dashboard() {
 
   const { user, logout } = useAuth();
 
+
   const [business, setBusiness] = useState(null);
+
   const [transactions, setTransactions] = useState([]);
 
 
@@ -16,6 +18,7 @@ function Dashboard() {
   useEffect(() => {
 
     fetchBusiness();
+
     fetchTransactions();
 
   }, []);
@@ -31,7 +34,8 @@ function Dashboard() {
 
       setBusiness(res.data);
 
-    } catch(error){
+
+    } catch(error) {
 
       console.log(error);
 
@@ -49,9 +53,10 @@ function Dashboard() {
 
       const res = await API.get("/transactions");
 
-      setTransactions(res.data.transactions);
+      setTransactions(res.data.transactions || []);
 
-    } catch(error){
+
+    } catch(error) {
 
       console.log(error);
 
@@ -63,23 +68,29 @@ function Dashboard() {
 
 
 
+
   const deleteTransaction = async (id) => {
 
     try {
 
+
       await API.delete(`/transactions/${id}`);
 
-      alert("Transaction deleted");
+
+      alert("Transaction deleted successfully");
+
 
       fetchTransactions();
 
 
-    } catch(error){
+    } catch(error) {
+
 
       alert(
         error.response?.data?.message ||
-        "Delete failed"
+        "Failed to delete transaction"
       );
+
 
     }
 
@@ -89,29 +100,42 @@ function Dashboard() {
 
 
 
+
   const totalIncome = transactions
+
     .filter(
       transaction => transaction.type === "income"
     )
+
     .reduce(
-      (sum, transaction) => sum + transaction.amount,
+      (total, transaction) =>
+        total + Number(transaction.amount),
       0
     );
+
+
 
 
 
   const totalExpense = transactions
+
     .filter(
       transaction => transaction.type === "expense"
     )
+
     .reduce(
-      (sum, transaction) => sum + transaction.amount,
+      (total, transaction) =>
+        total + Number(transaction.amount),
       0
     );
 
 
 
+
+
   const balance = totalIncome - totalExpense;
+
+
 
 
 
@@ -132,7 +156,10 @@ function Dashboard() {
       </p>
 
 
+
       <hr />
+
+
 
 
       <h2>
@@ -141,37 +168,51 @@ function Dashboard() {
 
 
 
-      {business ? (
+      {
+        business ? (
 
-        <div>
+          <div>
+
+
+            <p>
+              <strong>Name:</strong> {business.businessName}
+            </p>
+
+
+            <p>
+              <strong>Category:</strong> {business.category}
+            </p>
+
+
+            <p>
+              <strong>Description:</strong> {business.description}
+            </p>
+
+
+            <p>
+              <strong>Location:</strong> {business.location}
+            </p>
+
+
+          </div>
+
+
+        ) : (
 
           <p>
-            <b>Name:</b> {business.businessName}
+            No business found
           </p>
 
-          <p>
-            <b>Category:</b> {business.category}
-          </p>
+        )
+      }
 
-          <p>
-            <b>Location:</b> {business.location}
-          </p>
-
-        </div>
-
-
-      ) : (
-
-        <p>
-          No business found.
-        </p>
-
-      )}
 
 
 
 
       <hr />
+
+
 
 
 
@@ -180,24 +221,39 @@ function Dashboard() {
       </h2>
 
 
-      <p>
-        Total Income: ₵{totalIncome}
-      </p>
+      <div>
 
 
-      <p>
-        Total Expenses: ₵{totalExpense}
-      </p>
+        <p>
+          Total Income:
+          ₵{totalIncome}
+        </p>
 
 
-      <p>
-        Balance: ₵{balance}
-      </p>
+
+        <p>
+          Total Expenses:
+          ₵{totalExpense}
+        </p>
+
+
+
+        <p>
+          Balance:
+          ₵{balance}
+        </p>
+
+
+
+      </div>
+
 
 
 
 
       <hr />
+
+
 
 
 
@@ -210,7 +266,9 @@ function Dashboard() {
       </Link>
 
 
+
       {" "}
+
 
 
       <Link to="/create-transaction">
@@ -222,12 +280,19 @@ function Dashboard() {
       </Link>
 
 
+
+
       {" "}
 
 
+
       <button onClick={logout}>
+
         Logout
+
       </button>
+
+
 
 
 
@@ -235,9 +300,13 @@ function Dashboard() {
 
 
 
+
+
       <h2>
         Transactions
       </h2>
+
+
 
 
 
@@ -254,19 +323,36 @@ function Dashboard() {
 
           <table border="1" cellPadding="8">
 
+
             <thead>
+
 
               <tr>
 
-                <th>Title</th>
+                <th>
+                  Title
+                </th>
 
-                <th>Type</th>
 
-                <th>Amount</th>
+                <th>
+                  Type
+                </th>
 
-                <th>Category</th>
 
-                <th>Action</th>
+                <th>
+                  Amount
+                </th>
+
+
+                <th>
+                  Category
+                </th>
+
+
+                <th>
+                  Action
+                </th>
+
 
               </tr>
 
@@ -275,58 +361,85 @@ function Dashboard() {
 
 
 
+
+
             <tbody>
 
 
-            {
-              transactions.map(transaction => (
-
-                <tr key={transaction._id}>
+              {
+                transactions.map((transaction) => (
 
 
-                  <td>
-                    {transaction.title}
-                  </td>
+                  <tr key={transaction._id}>
 
 
-                  <td>
-                    {transaction.type}
-                  </td>
+                    <td>
+                      {transaction.title}
+                    </td>
 
 
-                  <td>
-                    ₵{transaction.amount}
-                  </td>
+                    <td>
+                      {transaction.type}
+                    </td>
 
 
-                  <td>
-                    {transaction.category}
-                  </td>
+                    <td>
+                      ₵{transaction.amount}
+                    </td>
 
 
-                  <td>
-
-                    <button
-                      onClick={() =>
-                        deleteTransaction(transaction._id)
-                      }
-                    >
-
-                      Delete
-
-                    </button>
+                    <td>
+                      {transaction.category}
+                    </td>
 
 
-                  </td>
+
+                    <td>
 
 
-                </tr>
+                      <Link
+                        to={`/edit-transaction/${transaction._id}`}
+                      >
 
-              ))
-            }
+                        <button>
+                          Edit
+                        </button>
+
+
+                      </Link>
+
+
+
+                      {" "}
+
+
+
+                      <button
+                        onClick={() =>
+                          deleteTransaction(transaction._id)
+                        }
+                      >
+
+                        Delete
+
+                      </button>
+
+
+
+                    </td>
+
+
+
+                  </tr>
+
+
+                ))
+              }
+
 
 
             </tbody>
+
 
 
           </table>
@@ -334,6 +447,7 @@ function Dashboard() {
 
         )
       }
+
 
 
 
