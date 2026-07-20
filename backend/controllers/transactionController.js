@@ -3,221 +3,486 @@ const Business = require("../models/Business");
 const mongoose = require("mongoose");
 
 
-// Add Transaction
-
+// Add transaction
 const addTransaction = async (req, res) => {
+
   try {
-    const { type, title, amount, category, description } = req.body;
 
-    // Find user's business
-    const business = await Business.findOne({
-      owner: req.user.id,
-    });
-
-    if (!business) {
-      return res.status(404).json({
-        message: "Create a business first",
-      });
-    }
-
-    const transaction = await Transaction.create({
-      business: business._id,
+    const {
       type,
       title,
       amount,
       category,
-      description,
+      description
+    } = req.body;
+
+
+
+    // Validation
+
+    if (!type || !title || !amount || !category) {
+
+      return res.status(400).json({
+        message:
+        "Type, title, amount and category are required"
+      });
+
+    }
+
+
+
+    if (!["income", "expense"].includes(type)) {
+
+      return res.status(400).json({
+        message:
+        "Transaction type must be income or expense"
+      });
+
+    }
+
+
+
+    if (Number(amount) <= 0) {
+
+      return res.status(400).json({
+        message:
+        "Amount must be greater than zero"
+      });
+
+    }
+
+
+
+
+    // Find user's business
+
+    const business = await Business.findOne({
+      owner: req.user.id,
     });
+
+
+
+    if (!business) {
+
+      return res.status(404).json({
+        message:
+        "Create a business first"
+      });
+
+    }
+
+
+
+
+    const transaction = await Transaction.create({
+
+      business: business._id,
+
+      type,
+
+      title: title.trim(),
+
+      amount: Number(amount),
+
+      category: category.trim(),
+
+      description:
+        description ? description.trim() : "",
+
+    });
+
+
+
 
     res.status(201).json({
-      message: "Transaction added successfully",
+
+      message:
+      "Transaction added successfully",
+
       transaction,
+
     });
 
-  } catch (error) {
+
+
+  } catch(error) {
+
     res.status(500).json({
-      message: error.message,
+      message:error.message
     });
+
   }
+
 };
 
 
-// Get All Transactions
+
+
+
+// Get all transactions
 
 const getTransactions = async (req, res) => {
+
   try {
+
+
     const business = await Business.findOne({
-      owner: req.user.id,
+      owner:req.user.id
     });
+
+
 
     if (!business) {
+
       return res.status(404).json({
-        message: "Business not found",
+        message:"Business not found"
       });
+
     }
 
-    const { type, page = 1, limit = 10 } = req.query;
+
+
+    const {
+      type,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+
+
 
     let filter = {
-      business: business._id,
+
+      business: business._id
+
     };
 
-    if (type) {
+
+
+
+    if(type){
+
       filter.type = type;
+
     }
 
+
+
+
     const transactions = await Transaction.find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * Number(limit))
+
+      .sort({
+        createdAt:-1
+      })
+
+      .skip((page - 1) * limit)
+
       .limit(Number(limit));
 
-    const total = await Transaction.countDocuments(filter);
+
+
+
+
+    const total =
+      await Transaction.countDocuments(filter);
+
+
+
+
 
     res.json({
+
       total,
-      page: Number(page),
-      pages: Math.ceil(total / Number(limit)),
-      transactions,
+
+      page:Number(page),
+
+      pages:
+      Math.ceil(total / limit),
+
+      transactions
+
     });
 
-  } catch (error) {
+
+
+  } catch(error) {
+
     res.status(500).json({
-      message: error.message,
+      message:error.message
     });
+
   }
+
 };
 
 
-// Get Single Transaction
 
-const getTransactionById = async (req, res) => {
+
+
+
+// Get single transaction
+
+const getTransactionById = async (req,res)=>{
+
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+
+
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+
       return res.status(400).json({
-        message: "Invalid transaction ID",
+
+        message:"Invalid transaction ID"
+
       });
+
     }
 
-    const business = await Business.findOne({
-      owner: req.user.id,
-    });
 
-    if (!business) {
+
+
+    const transaction =
+      await Transaction.findById(req.params.id);
+
+
+
+
+    if(!transaction){
+
       return res.status(404).json({
-        message: "Business not found",
+
+        message:"Transaction not found"
+
       });
+
     }
 
-    const transaction = await Transaction.findOne({
-      _id: req.params.id,
-      business: business._id,
-    });
 
-    if (!transaction) {
-      return res.status(404).json({
-        message: "Transaction not found",
-      });
-    }
+
 
     res.json(transaction);
 
-  } catch (error) {
+
+
+  } catch(error){
+
     res.status(500).json({
-      message: error.message,
+
+      message:error.message
+
     });
+
   }
+
 };
 
 
-// Update Transaction
 
-const updateTransaction = async (req, res) => {
+
+
+
+
+// Update transaction
+
+const updateTransaction = async (req,res)=>{
+
   try {
-    const business = await Business.findOne({
-      owner: req.user.id,
-    });
 
-    if (!business) {
-      return res.status(404).json({
-        message: "Business not found",
+
+    const {
+      type,
+      title,
+      amount,
+      category,
+      description
+    } = req.body;
+
+
+
+
+    if(type && !["income","expense"].includes(type)){
+
+      return res.status(400).json({
+
+        message:
+        "Transaction type must be income or expense"
+
       });
+
     }
 
-    const transaction = await Transaction.findOne({
-      _id: req.params.id,
-      business: business._id,
-    });
 
-    if (!transaction) {
-      return res.status(404).json({
-        message: "Transaction not found",
+
+
+    if(amount && Number(amount) <= 0){
+
+      return res.status(400).json({
+
+        message:
+        "Amount must be greater than zero"
+
       });
+
     }
 
-    transaction.type = req.body.type || transaction.type;
-    transaction.title = req.body.title || transaction.title;
-    transaction.amount = req.body.amount || transaction.amount;
-    transaction.category = req.body.category || transaction.category;
-    transaction.description =
-      req.body.description || transaction.description;
 
-    await transaction.save();
+
+
+    const transaction =
+      await Transaction.findById(req.params.id);
+
+
+
+
+    if(!transaction){
+
+      return res.status(404).json({
+
+        message:"Transaction not found"
+
+      });
+
+    }
+
+
+
+
+    const updatedTransaction =
+      await Transaction.findByIdAndUpdate(
+
+        req.params.id,
+
+        {
+
+          type,
+
+          title:
+          title ? title.trim() : transaction.title,
+
+
+          amount:
+          amount ? Number(amount) : transaction.amount,
+
+
+          category:
+          category ? category.trim() : transaction.category,
+
+
+          description:
+          description ? description.trim() : transaction.description
+
+        },
+
+        {
+          new:true
+        }
+
+      );
+
+
+
+
 
     res.json({
-      message: "Transaction updated successfully",
-      transaction,
+
+      message:
+      "Transaction updated successfully",
+
+      transaction:
+      updatedTransaction
+
     });
 
-  } catch (error) {
+
+
+  } catch(error){
+
     res.status(500).json({
-      message: error.message,
+
+      message:error.message
+
     });
+
   }
+
 };
 
 
-// Delete Transaction
 
-const deleteTransaction = async (req, res) => {
+
+
+
+
+
+// Delete transaction
+
+const deleteTransaction = async (req,res)=>{
+
   try {
-    const business = await Business.findOne({
-      owner: req.user.id,
-    });
 
-    if (!business) {
+
+    const transaction =
+      await Transaction.findById(req.params.id);
+
+
+
+
+    if(!transaction){
+
       return res.status(404).json({
-        message: "Business not found",
+
+        message:
+        "Transaction not found"
+
       });
+
     }
 
-    const transaction = await Transaction.findOne({
-      _id: req.params.id,
-      business: business._id,
-    });
 
-    if (!transaction) {
-      return res.status(404).json({
-        message: "Transaction not found",
-      });
-    }
+
 
     await transaction.deleteOne();
 
+
+
+
     res.json({
-      message: "Transaction deleted successfully",
+
+      message:
+      "Transaction deleted successfully"
+
     });
 
-  } catch (error) {
+
+
+  } catch(error){
+
     res.status(500).json({
-      message: error.message,
+
+      message:error.message
+
     });
+
   }
+
 };
 
+
+
+
+
+
+
+
 module.exports = {
+
   addTransaction,
+
   getTransactions,
+
   getTransactionById,
+
   updateTransaction,
-  deleteTransaction,
+
+  deleteTransaction
+
 };
