@@ -7,19 +7,30 @@ function Dashboard() {
   const { user, logout } = useAuth();
 
   const [business, setBusiness] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    const fetchBusiness = async () => {
-      try {
-        const res = await API.get("/business");
-        setBusiness(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchBusiness();
+    fetchTransactions();
   }, []);
+
+  const fetchBusiness = async () => {
+    try {
+      const res = await API.get("/business");
+      setBusiness(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      const res = await API.get("/transactions");
+      setTransactions(res.data.transactions);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -34,7 +45,7 @@ function Dashboard() {
       {business ? (
         <div>
           <p>
-            <strong>Business Name:</strong> {business.businessName}
+            <strong>Name:</strong> {business.businessName}
           </p>
 
           <p>
@@ -67,9 +78,37 @@ function Dashboard() {
 
       {" "}
 
-      <button onClick={logout}>
-        Logout
-      </button>
+      <button onClick={logout}>Logout</button>
+
+      <hr />
+
+      <h2>Transactions</h2>
+
+      {transactions.length === 0 ? (
+        <p>No transactions yet.</p>
+      ) : (
+        <table border="1" cellPadding="8">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {transactions.map((transaction) => (
+              <tr key={transaction._id}>
+                <td>{transaction.title}</td>
+                <td>{transaction.type}</td>
+                <td>{transaction.amount}</td>
+                <td>{transaction.category}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
