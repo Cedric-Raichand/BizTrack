@@ -1,86 +1,132 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
-
 function Register() {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
-
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-
       const response = await API.post(
         "/auth/register",
         formData
       );
 
-      console.log(response.data);
+      alert(response.data.message);
 
-      alert("Registration successful");
+      navigate("/login");
 
-    } catch(error) {
+    } catch (error) {
+      console.log(error.response?.data || error.message);
 
-      console.log(error.response?.data);
-
-      alert("Registration failed");
-
+      alert(
+        error.response?.data?.message ||
+        "Registration failed"
+      );
     }
   };
 
-
   return (
-    <div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
 
-      <h1>Create Account</h1>
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
 
-      <form onSubmit={handleSubmit}>
+        <h1 className="text-3xl font-bold text-center text-blue-600 mb-2">
+          BizTrack
+        </h1>
 
-        <input
-          name="name"
-          placeholder="Name"
-          onChange={handleChange}
-        />
+        <p className="text-center text-gray-500 mb-8">
+          Create your account
+        </p>
 
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-        <input
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-        />
+          <div>
+            <label className="block mb-2 font-medium">
+              Full Name
+            </label>
 
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          onChange={handleChange}
-        />
+          <div>
+            <label className="block mb-2 font-medium">
+              Email
+            </label>
 
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-        <button>
-          Register
-        </button>
+          <div>
+            <label className="block mb-2 font-medium">
+              Password
+            </label>
 
-      </form>
+            <input
+              type="password"
+              name="password"
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+          >
+            Create Account
+          </button>
+
+        </form>
+
+        <p className="text-center mt-6 text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Login
+          </Link>
+        </p>
+
+      </div>
 
     </div>
   );
 }
-
 
 export default Register;
