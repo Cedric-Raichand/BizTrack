@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import API from "../api/axios";
+import Layout from "../components/Layout";
 
 
-const CreateBusiness = () => {
-
+function CreateBusiness() {
 
   const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ const CreateBusiness = () => {
 
 
 
-  const handleChange = (e) => {
+  const handleChange = (e)=>{
 
     setFormData({
 
@@ -34,23 +35,33 @@ const CreateBusiness = () => {
 
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e)=>{
 
     e.preventDefault();
 
 
-    try {
+    try{
 
-      await API.post("/business", formData);
+      await API.post(
+        "/business",
+        formData
+      );
+
+
+      alert("Business created successfully");
 
 
       navigate("/dashboard");
 
 
-    } catch(error) {
+    }catch(error){
 
-      console.log(
-        error.response?.data || error.message
+      console.log(error);
+
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to create business"
       );
 
     }
@@ -61,58 +72,133 @@ const CreateBusiness = () => {
 
   return (
 
-    <div>
+    <Layout>
 
 
-      <h1>
-        Create Business
-      </h1>
+      <div className="max-w-xl mx-auto">
 
 
-      <form onSubmit={handleSubmit}>
+        <div className="bg-white shadow rounded-xl p-8">
 
 
-        <input
-          name="businessName"
-          placeholder="Business name"
-          onChange={handleChange}
-        />
+          <h1 className="text-3xl font-bold mb-6">
+            Create Business
+          </h1>
 
 
-        <input
-          name="category"
-          placeholder="Category"
-          onChange={handleChange}
-        />
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
 
 
-        <input
-          name="location"
-          placeholder="Location"
-          onChange={handleChange}
-        />
+            <input
+
+              type="text"
+
+              name="businessName"
+
+              placeholder="Business Name"
+
+              value={formData.businessName}
+
+              onChange={handleChange}
+
+              className="w-full border rounded-lg p-3"
+
+              required
+
+            />
 
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          onChange={handleChange}
-        />
+
+            <input
+
+              type="text"
+
+              name="category"
+
+              placeholder="Category"
+
+              value={formData.category}
+
+              onChange={handleChange}
+
+              className="w-full border rounded-lg p-3"
+
+              required
+
+            />
 
 
-        <button type="submit">
-          Create
-        </button>
+
+            <textarea
+
+              name="description"
+
+              placeholder="Business Description"
+
+              value={formData.description}
+
+              onChange={handleChange}
+
+              className="w-full border rounded-lg p-3"
+
+              rows="4"
+
+            />
 
 
-      </form>
+
+            <input
+
+              type="text"
+
+              name="location"
+
+              placeholder="Location"
+
+              value={formData.location}
+
+              onChange={handleChange}
+
+              className="w-full border rounded-lg p-3"
+
+              required
+
+            />
 
 
-    </div>
+
+            <button
+
+              type="submit"
+
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+
+            >
+
+              Create Business
+
+            </button>
+
+
+
+          </form>
+
+
+        </div>
+
+
+      </div>
+
+
+    </Layout>
 
   );
 
-};
+}
 
 
 export default CreateBusiness;
