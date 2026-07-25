@@ -24,7 +24,6 @@ function Dashboard() {
 
   const [transactions, setTransactions] = useState([]);
 
-
   const [loading, setLoading] = useState(true);
 
 
@@ -73,7 +72,6 @@ function Dashboard() {
 
       await fetchBusiness();
 
-
       await fetchTransactions();
 
 
@@ -112,7 +110,6 @@ function Dashboard() {
       console.log(error);
 
 
-
     }
 
   };
@@ -142,12 +139,12 @@ function Dashboard() {
 
 
 
-
       if(periodFilter){
 
         url += `period=${periodFilter}`;
 
       }
+
 
 
 
@@ -164,7 +161,7 @@ function Dashboard() {
 
 
 
-    } catch(error){
+    } catch(error) {
 
 
       console.log(error);
@@ -172,10 +169,9 @@ function Dashboard() {
 
 
       toast.error(
-
         "Failed to load transactions"
-
       );
+
 
     }
 
@@ -188,10 +184,13 @@ function Dashboard() {
 
 
 
+
   const deleteTransaction = async (id) => {
 
 
-    if(!window.confirm("Delete this transaction?")) return;
+    if(!window.confirm("Delete this transaction?"))
+
+      return;
 
 
 
@@ -218,8 +217,7 @@ function Dashboard() {
 
 
 
-    } catch(error){
-
+    } catch(error) {
 
 
       toast.error(
@@ -233,8 +231,8 @@ function Dashboard() {
 
     }
 
-
   };
+
 
 
 
@@ -260,6 +258,7 @@ function Dashboard() {
 
 
 
+
   const totalIncome = filteredTransactions
 
     .filter((t)=>t.type==="income")
@@ -271,6 +270,7 @@ function Dashboard() {
       0
 
     );
+
 
 
 
@@ -292,8 +292,8 @@ function Dashboard() {
 
 
 
-  const balance = totalIncome - totalExpenses;
 
+  const balance = totalIncome - totalExpenses;
 
 
   const totalTransactions = filteredTransactions.length;
@@ -306,6 +306,7 @@ function Dashboard() {
 
 
   if(loading){
+
 
     return (
 
@@ -325,6 +326,7 @@ function Dashboard() {
       </Layout>
 
     );
+
 
   }
 
@@ -348,6 +350,7 @@ function Dashboard() {
 
 
 
+
         <div>
 
           <h1 className="text-3xl font-bold">
@@ -355,7 +358,6 @@ function Dashboard() {
             Welcome, {user?.name}
 
           </h1>
-
 
 
           <p className="text-gray-500">
@@ -424,14 +426,48 @@ function Dashboard() {
               </p>
 
 
-
             </div>
+
 
 
           ) : (
 
 
-            <p>No business found.</p>
+
+            <div className="text-center py-6">
+
+
+              <h3 className="text-xl font-semibold mb-2">
+
+                No business profile yet
+
+              </h3>
+
+
+
+              <p className="text-gray-500 mb-4">
+
+                Create your business profile to start tracking your finances.
+
+              </p>
+
+
+
+
+              <Link to="/create-business">
+
+
+                <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
+
+                  Create Business
+
+                </button>
+
+
+              </Link>
+
+
+            </div>
 
 
           )
@@ -463,7 +499,6 @@ function Dashboard() {
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
 
 
             <SummaryCard
@@ -507,7 +542,6 @@ function Dashboard() {
             />
 
 
-
           </div>
 
 
@@ -543,11 +577,15 @@ function Dashboard() {
 
           <Link to="/create-business">
 
+
             <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
+
 
               Create Business
 
+
             </button>
+
 
           </Link>
 
@@ -560,13 +598,14 @@ function Dashboard() {
 
             <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
 
+
               Add Transaction
+
 
             </button>
 
 
           </Link>
-
 
 
 
@@ -656,9 +695,7 @@ function Dashboard() {
             </option>
 
 
-
           </select>
-
 
 
 
@@ -674,7 +711,6 @@ function Dashboard() {
             className="border rounded-lg p-3"
 
           >
-
 
 
             <option value="">
@@ -708,7 +744,6 @@ function Dashboard() {
           </select>
 
 
-
         </div>
 
 
@@ -719,15 +754,70 @@ function Dashboard() {
 
 
 
-        <TransactionTable
+        {
 
-          transactions={filteredTransactions}
-
-          onDelete={deleteTransaction}
-
-        />
+        filteredTransactions.length === 0 ? (
 
 
+
+          <div className="bg-white shadow rounded-xl p-8 text-center">
+
+
+            <h3 className="text-xl font-semibold mb-2">
+
+              No transactions yet
+
+            </h3>
+
+
+
+            <p className="text-gray-500 mb-4">
+
+              Start adding income and expenses to track your business performance.
+
+            </p>
+
+
+
+
+
+            <Link to="/create-transaction">
+
+
+              <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
+
+
+                Add Transaction
+
+
+              </button>
+
+
+            </Link>
+
+
+
+          </div>
+
+
+
+        ) : (
+
+
+
+          <TransactionTable
+
+            transactions={filteredTransactions}
+
+            onDelete={deleteTransaction}
+
+          />
+
+
+        )
+
+
+        }
 
 
 
