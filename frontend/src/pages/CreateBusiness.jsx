@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
 import Layout from "../components/Layout";
+import { toast } from "react-toastify";
 
 
 function CreateBusiness() {
@@ -21,6 +22,7 @@ function CreateBusiness() {
 
 
 
+
   const handleChange = (e)=>{
 
     setFormData({
@@ -35,6 +37,8 @@ function CreateBusiness() {
 
 
 
+
+
   const handleSubmit = async(e)=>{
 
     e.preventDefault();
@@ -42,31 +46,52 @@ function CreateBusiness() {
 
     try{
 
+
       await API.post(
+
         "/business",
+
         formData
+
       );
 
 
-      alert("Business created successfully");
+
+      toast.success(
+        "Business created successfully"
+      );
 
 
-      navigate("/dashboard");
+
+      setTimeout(() => {
+
+        navigate("/dashboard");
+
+      }, 1000);
+
 
 
     }catch(error){
 
+
       console.log(error);
 
 
-      alert(
+
+      toast.error(
+
         error.response?.data?.message ||
+
         "Failed to create business"
+
       );
+
 
     }
 
   };
+
+
 
 
 
@@ -82,15 +107,23 @@ function CreateBusiness() {
 
 
           <h1 className="text-3xl font-bold mb-6">
+
             Create Business
+
           </h1>
 
 
 
+
+
           <form
+
             onSubmit={handleSubmit}
+
             className="space-y-5"
+
           >
+
 
 
             <input
@@ -110,6 +143,8 @@ function CreateBusiness() {
               required
 
             />
+
+
 
 
 
@@ -133,6 +168,8 @@ function CreateBusiness() {
 
 
 
+
+
             <textarea
 
               name="description"
@@ -148,6 +185,8 @@ function CreateBusiness() {
               rows="4"
 
             />
+
+
 
 
 
@@ -171,6 +210,8 @@ function CreateBusiness() {
 
 
 
+
+
             <button
 
               type="submit"
@@ -182,6 +223,7 @@ function CreateBusiness() {
               Create Business
 
             </button>
+
 
 
 
