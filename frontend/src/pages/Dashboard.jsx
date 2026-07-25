@@ -9,6 +9,7 @@ import SummaryCard from "../components/SummaryCard";
 import FinanceChart from "../components/FinanceChart";
 import TransactionTable from "../components/TransactionTable";
 import ExportButtons from "../components/ExportButtons";
+import ExportPDF from "../components/ExportPDF";
 
 function Dashboard() {
 
@@ -289,6 +290,13 @@ function Dashboard() {
               <ExportButtons
 
               transactions={filteredTransactions}
+
+          />
+          <ExportPDF
+
+            transactions={filteredTransactions}
+  
+            business={business}
 
           />
 
