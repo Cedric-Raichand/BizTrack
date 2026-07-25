@@ -10,6 +10,10 @@ function CreateTransaction() {
   const navigate = useNavigate();
 
 
+  const [loading, setLoading] = useState(false);
+
+
+
   const [formData, setFormData] = useState({
 
     type: "income",
@@ -39,12 +43,16 @@ function CreateTransaction() {
 
 
 
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
 
     try {
+
+      setLoading(true);
+
 
 
       await API.post(
@@ -63,7 +71,11 @@ function CreateTransaction() {
 
 
 
-      navigate("/dashboard");
+      setTimeout(() => {
+
+        navigate("/dashboard");
+
+      }, 1000);
 
 
 
@@ -79,10 +91,18 @@ function CreateTransaction() {
       );
 
 
+    } finally {
+
+
+      setLoading(false);
+
+
     }
 
 
   };
+
+
 
 
 
@@ -99,6 +119,8 @@ function CreateTransaction() {
 
 
 
+
+
       <form onSubmit={handleSubmit}>
 
 
@@ -109,6 +131,8 @@ function CreateTransaction() {
           value={formData.type}
 
           onChange={handleChange}
+
+          disabled={loading}
 
         >
 
@@ -127,7 +151,10 @@ function CreateTransaction() {
 
 
 
+
         <br /><br />
+
+
 
 
 
@@ -143,12 +170,16 @@ function CreateTransaction() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
 
 
 
 
+
         <br /><br />
+
 
 
 
@@ -165,12 +196,16 @@ function CreateTransaction() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
 
 
 
 
+
         <br /><br />
+
 
 
 
@@ -187,12 +222,16 @@ function CreateTransaction() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
 
 
 
 
+
         <br /><br />
+
 
 
 
@@ -207,7 +246,10 @@ function CreateTransaction() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
+
 
 
 
@@ -217,11 +259,29 @@ function CreateTransaction() {
 
 
 
-        <button type="submit">
 
-          Save Transaction
+        <button
+
+          type="submit"
+
+          disabled={loading}
+
+        >
+
+          {
+
+            loading ?
+
+            "Saving..." :
+
+            "Save Transaction"
+
+          }
+
 
         </button>
+
+
 
 
 
