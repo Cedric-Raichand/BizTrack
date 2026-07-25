@@ -20,6 +20,11 @@ function Register() {
 
 
 
+  const [loading, setLoading] = useState(false);
+
+
+
+
 
   const handleChange = (e) => {
 
@@ -37,12 +42,17 @@ function Register() {
 
 
 
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
 
     try {
+
+
+      setLoading(true);
+
 
 
       const response = await API.post(
@@ -73,6 +83,7 @@ function Register() {
 
 
 
+
     } catch (error) {
 
 
@@ -95,10 +106,18 @@ function Register() {
       );
 
 
+
+    } finally {
+
+
+      setLoading(false);
+
+
     }
 
 
   };
+
 
 
 
@@ -129,6 +148,7 @@ function Register() {
 
 
 
+
         <form
 
           onSubmit={handleSubmit}
@@ -148,6 +168,7 @@ function Register() {
             </label>
 
 
+
             <input
 
               type="text"
@@ -160,13 +181,18 @@ function Register() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 
               required
 
             />
 
+
           </div>
+
+
 
 
 
@@ -181,6 +207,7 @@ function Register() {
             </label>
 
 
+
             <input
 
               type="email"
@@ -193,6 +220,8 @@ function Register() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 
               required
@@ -201,6 +230,8 @@ function Register() {
 
 
           </div>
+
+
 
 
 
@@ -215,6 +246,7 @@ function Register() {
             </label>
 
 
+
             <input
 
               type="password"
@@ -226,6 +258,8 @@ function Register() {
               value={formData.password}
 
               onChange={handleChange}
+
+              disabled={loading}
 
               className="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
 
@@ -240,17 +274,32 @@ function Register() {
 
 
 
+
+
           <button
 
             type="submit"
 
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
 
           >
 
-            Create Account
+
+            {
+
+              loading ?
+
+              "Creating Account..." :
+
+              "Create Account"
+
+            }
+
 
           </button>
+
 
 
 
@@ -261,9 +310,12 @@ function Register() {
 
 
 
+
+
         <p className="text-center mt-6 text-gray-600">
 
           Already have an account?{" "}
+
 
 
           <Link
@@ -280,6 +332,8 @@ function Register() {
 
 
         </p>
+
+
 
 
 
