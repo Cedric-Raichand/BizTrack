@@ -8,6 +8,7 @@ import Layout from "../components/Layout";
 import SummaryCard from "../components/SummaryCard";
 import FinanceChart from "../components/FinanceChart";
 import TransactionTable from "../components/TransactionTable";
+import ExportButtons from "../components/ExportButtons";
 
 function Dashboard() {
 
@@ -285,6 +286,11 @@ function Dashboard() {
             </button>
 
           </Link>
+              <ExportButtons
+
+              transactions={filteredTransactions}
+
+          />
 
         </div>
 
