@@ -18,6 +18,7 @@ function Dashboard() {
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [periodFilter, setPeriodFilter] = useState("");
 
 
 
@@ -34,7 +35,7 @@ function Dashboard() {
 
     fetchTransactions();
 
-  }, [typeFilter]);
+  }, [typeFilter, periodFilter]);
 
 
 
@@ -64,11 +65,17 @@ function Dashboard() {
 
     try {
 
-      let url = "/transactions";
+      let url = "/transactions?";
 
       if (typeFilter) {
 
-        url += `?type=${typeFilter}`;
+        url += `type=${typeFilter}&`;
+
+      }
+
+      if (periodFilter) {
+
+        url += `period=${periodFilter}`;
 
       }
 
@@ -90,27 +97,19 @@ function Dashboard() {
 
   const deleteTransaction = async (id) => {
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this transaction?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("Delete this transaction?")) return;
 
     try {
 
       await API.delete(`/transactions/${id}`);
 
-      alert("Transaction deleted successfully");
-
       fetchTransactions();
 
     } catch (error) {
 
-      console.log(error);
-
       alert(
         error.response?.data?.message ||
-        "Failed to delete transaction"
+        "Delete failed"
       );
 
     }
@@ -132,29 +131,15 @@ function Dashboard() {
 
 
   const totalIncome = filteredTransactions
-
-    .filter((transaction) => transaction.type === "income")
-
-    .reduce(
-      (total, transaction) =>
-        total + Number(transaction.amount),
-      0
-    );
-
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
 
 
 
   const totalExpenses = filteredTransactions
-
-    .filter((transaction) => transaction.type === "expense")
-
-    .reduce(
-      (total, transaction) =>
-        total + Number(transaction.amount),
-      0
-    );
-
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
 
 
@@ -172,8 +157,6 @@ function Dashboard() {
     <Layout>
 
       <div className="space-y-8">
-
-
 
         <div>
 
@@ -207,29 +190,13 @@ function Dashboard() {
 
             <div className="space-y-2">
 
-              <p>
+              <p><strong>Name:</strong> {business.businessName}</p>
 
-                <strong>Name:</strong> {business.businessName}
+              <p><strong>Category:</strong> {business.category}</p>
 
-              </p>
+              <p><strong>Description:</strong> {business.description}</p>
 
-              <p>
-
-                <strong>Category:</strong> {business.category}
-
-              </p>
-
-              <p>
-
-                <strong>Description:</strong> {business.description}
-
-              </p>
-
-              <p>
-
-                <strong>Location:</strong> {business.location}
-
-              </p>
+              <p><strong>Location:</strong> {business.location}</p>
 
             </div>
 
@@ -301,7 +268,7 @@ function Dashboard() {
 
           <Link to="/create-business">
 
-            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700">
+            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
 
               Create Business
 
@@ -309,11 +276,9 @@ function Dashboard() {
 
           </Link>
 
-
-
           <Link to="/create-transaction">
 
-            <button className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700">
+            <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
 
               Add Transaction
 
@@ -328,19 +293,19 @@ function Dashboard() {
 
 
 
-        <div className="flex gap-4">
+        <div className="grid md:grid-cols-3 gap-4">
 
           <input
 
             type="text"
 
-            placeholder="Search transaction..."
+            placeholder="Search..."
 
             value={search}
 
             onChange={(e) => setSearch(e.target.value)}
 
-            className="flex-1 border rounded-lg p-3"
+            className="border rounded-lg p-3"
 
           />
 
@@ -356,11 +321,33 @@ function Dashboard() {
 
           >
 
-            <option value="">All</option>
+            <option value="">All Types</option>
 
             <option value="income">Income</option>
 
             <option value="expense">Expense</option>
+
+          </select>
+
+
+
+          <select
+
+            value={periodFilter}
+
+            onChange={(e) => setPeriodFilter(e.target.value)}
+
+            className="border rounded-lg p-3"
+
+          >
+
+            <option value="">All Time</option>
+
+            <option value="today">Today</option>
+
+            <option value="month">This Month</option>
+
+            <option value="year">This Year</option>
 
           </select>
 
@@ -378,8 +365,6 @@ function Dashboard() {
           onDelete={deleteTransaction}
 
         />
-
-
 
       </div>
 
