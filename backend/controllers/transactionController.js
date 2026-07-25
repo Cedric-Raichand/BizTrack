@@ -17,41 +17,33 @@ const addTransaction = async (req, res) => {
     } = req.body;
 
 
-
     // Validation
 
     if (!type || !title || !amount || !category) {
 
       return res.status(400).json({
-        message:
-        "Type, title, amount and category are required"
+        message: "Type, title, amount and category are required"
       });
 
     }
-
 
 
     if (!["income", "expense"].includes(type)) {
 
       return res.status(400).json({
-        message:
-        "Transaction type must be income or expense"
+        message: "Transaction type must be income or expense"
       });
 
     }
-
 
 
     if (Number(amount) <= 0) {
 
       return res.status(400).json({
-        message:
-        "Amount must be greater than zero"
+        message: "Amount must be greater than zero"
       });
 
     }
-
-
 
 
     // Find user's business
@@ -61,17 +53,13 @@ const addTransaction = async (req, res) => {
     });
 
 
-
     if (!business) {
 
       return res.status(404).json({
-        message:
-        "Create a business first"
+        message: "Create a business first"
       });
 
     }
-
-
 
 
     const transaction = await Transaction.create({
@@ -86,35 +74,29 @@ const addTransaction = async (req, res) => {
 
       category: category.trim(),
 
-      description:
-        description ? description.trim() : "",
+      description: description ? description.trim() : "",
 
     });
 
 
-
-
     res.status(201).json({
 
-      message:
-      "Transaction added successfully",
+      message: "Transaction added successfully",
 
       transaction,
 
     });
 
 
-
-  } catch(error) {
+  } catch (error) {
 
     res.status(500).json({
-      message:error.message
+      message: error.message
     });
 
   }
 
 };
-
 
 
 
@@ -125,150 +107,164 @@ const getTransactions = async (req, res) => {
 
   try {
 
-
     const business = await Business.findOne({
-      owner:req.user.id
+      owner: req.user.id
     });
-
 
 
     if (!business) {
 
       return res.status(404).json({
-        message:"Business not found"
+        message: "Business not found"
       });
 
     }
 
 
-
     const {
       type,
+      period,
       page = 1,
       limit = 10
     } = req.query;
 
 
-
-
     let filter = {
-
       business: business._id
-
     };
 
 
+    // Filter by transaction type
 
-
-    if(type){
+    if (type) {
 
       filter.type = type;
 
     }
 
 
+    // Filter by period
+
+    const now = new Date();
+
+
+    if (period === "today") {
+
+      const startOfDay = new Date(now);
+
+      startOfDay.setHours(0, 0, 0, 0);
+
+      filter.createdAt = {
+        $gte: startOfDay
+      };
+
+    }
+
+
+    if (period === "month") {
+
+      filter.createdAt = {
+
+        $gte: new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          1
+        )
+
+      };
+
+    }
+
+
+    if (period === "year") {
+
+      filter.createdAt = {
+
+        $gte: new Date(
+          now.getFullYear(),
+          0,
+          1
+        )
+
+      };
+
+    }
 
 
     const transactions = await Transaction.find(filter)
 
       .sort({
-        createdAt:-1
+        createdAt: -1
       })
 
-      .skip((page - 1) * limit)
+      .skip((page - 1) * Number(limit))
 
       .limit(Number(limit));
 
 
-
-
-
-    const total =
-      await Transaction.countDocuments(filter);
-
-
-
+    const total = await Transaction.countDocuments(filter);
 
 
     res.json({
 
       total,
 
-      page:Number(page),
+      page: Number(page),
 
-      pages:
-      Math.ceil(total / limit),
+      pages: Math.ceil(total / Number(limit)),
 
       transactions
 
     });
 
 
-
-  } catch(error) {
+  } catch (error) {
 
     res.status(500).json({
-      message:error.message
+      message: error.message
     });
 
   }
 
 };
-
-
 
 
 
 
 // Get single transaction
 
-const getTransactionById = async (req,res)=>{
+const getTransactionById = async (req, res) => {
 
   try {
 
-
-    if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
 
       return res.status(400).json({
-
-        message:"Invalid transaction ID"
-
+        message: "Invalid transaction ID"
       });
 
     }
 
 
+    const transaction = await Transaction.findById(req.params.id);
 
 
-    const transaction =
-      await Transaction.findById(req.params.id);
-
-
-
-
-    if(!transaction){
+    if (!transaction) {
 
       return res.status(404).json({
-
-        message:"Transaction not found"
-
+        message: "Transaction not found"
       });
 
     }
-
-
 
 
     res.json(transaction);
 
 
-
-  } catch(error){
+  } catch (error) {
 
     res.status(500).json({
-
-      message:error.message
-
+      message: error.message
     });
 
   }
@@ -278,15 +274,11 @@ const getTransactionById = async (req,res)=>{
 
 
 
-
-
-
 // Update transaction
 
-const updateTransaction = async (req,res)=>{
+const updateTransaction = async (req, res) => {
 
   try {
-
 
     const {
       type,
@@ -297,178 +289,118 @@ const updateTransaction = async (req,res)=>{
     } = req.body;
 
 
-
-
-    if(type && !["income","expense"].includes(type)){
+    if (type && !["income", "expense"].includes(type)) {
 
       return res.status(400).json({
-
-        message:
-        "Transaction type must be income or expense"
-
+        message: "Transaction type must be income or expense"
       });
 
     }
 
 
-
-
-    if(amount && Number(amount) <= 0){
+    if (amount && Number(amount) <= 0) {
 
       return res.status(400).json({
-
-        message:
-        "Amount must be greater than zero"
-
+        message: "Amount must be greater than zero"
       });
 
     }
 
 
+    const transaction = await Transaction.findById(req.params.id);
 
 
-    const transaction =
-      await Transaction.findById(req.params.id);
-
-
-
-
-    if(!transaction){
+    if (!transaction) {
 
       return res.status(404).json({
-
-        message:"Transaction not found"
-
+        message: "Transaction not found"
       });
 
     }
 
 
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
 
+      req.params.id,
 
-    const updatedTransaction =
-      await Transaction.findByIdAndUpdate(
+      {
 
-        req.params.id,
+        type,
 
-        {
+        title: title ? title.trim() : transaction.title,
 
-          type,
+        amount: amount ? Number(amount) : transaction.amount,
 
-          title:
-          title ? title.trim() : transaction.title,
+        category: category ? category.trim() : transaction.category,
 
+        description: description ? description.trim() : transaction.description
 
-          amount:
-          amount ? Number(amount) : transaction.amount,
+      },
 
+      {
+        new: true
+      }
 
-          category:
-          category ? category.trim() : transaction.category,
-
-
-          description:
-          description ? description.trim() : transaction.description
-
-        },
-
-        {
-          new:true
-        }
-
-      );
-
-
-
+    );
 
 
     res.json({
 
-      message:
-      "Transaction updated successfully",
+      message: "Transaction updated successfully",
 
-      transaction:
-      updatedTransaction
+      transaction: updatedTransaction
 
     });
 
 
-
-  } catch(error){
+  } catch (error) {
 
     res.status(500).json({
-
-      message:error.message
-
+      message: error.message
     });
 
   }
 
 };
-
-
-
-
 
 
 
 
 // Delete transaction
 
-const deleteTransaction = async (req,res)=>{
+const deleteTransaction = async (req, res) => {
 
   try {
 
-
-    const transaction =
-      await Transaction.findById(req.params.id);
+    const transaction = await Transaction.findById(req.params.id);
 
 
-
-
-    if(!transaction){
+    if (!transaction) {
 
       return res.status(404).json({
-
-        message:
-        "Transaction not found"
-
+        message: "Transaction not found"
       });
 
     }
 
 
-
-
     await transaction.deleteOne();
 
 
-
-
     res.json({
-
-      message:
-      "Transaction deleted successfully"
-
+      message: "Transaction deleted successfully"
     });
 
 
-
-  } catch(error){
+  } catch (error) {
 
     res.status(500).json({
-
-      message:error.message
-
+      message: error.message
     });
 
   }
 
 };
-
-
-
-
 
 
 

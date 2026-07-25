@@ -6,19 +6,17 @@ import API from "../api/axios";
 
 import Layout from "../components/Layout";
 import SummaryCard from "../components/SummaryCard";
-import TransactionTable from "../components/TransactionTable";
 import FinanceChart from "../components/FinanceChart";
+import TransactionTable from "../components/TransactionTable";
 
 function Dashboard() {
 
   const { user } = useAuth();
 
   const [business, setBusiness] = useState(null);
-
   const [transactions, setTransactions] = useState([]);
 
   const [search, setSearch] = useState("");
-
   const [typeFilter, setTypeFilter] = useState("");
 
 
@@ -124,11 +122,9 @@ function Dashboard() {
 
 
   const filteredTransactions = transactions.filter((transaction) =>
-
     transaction.title
       .toLowerCase()
       .includes(search.toLowerCase())
-
   );
 
 
@@ -165,6 +161,8 @@ function Dashboard() {
 
   const balance = totalIncome - totalExpenses;
 
+  const totalTransactions = filteredTransactions.length;
+
 
 
 
@@ -174,7 +172,6 @@ function Dashboard() {
     <Layout>
 
       <div className="space-y-8">
-
 
 
 
@@ -193,7 +190,6 @@ function Dashboard() {
           </p>
 
         </div>
-
 
 
 
@@ -249,7 +245,6 @@ function Dashboard() {
 
 
 
-
         <div>
 
           <h2 className="text-2xl font-bold mb-5">
@@ -258,40 +253,44 @@ function Dashboard() {
 
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             <SummaryCard
-
               title="Total Income"
-
               amount={totalIncome}
-
             />
 
             <SummaryCard
-
               title="Total Expenses"
-
               amount={totalExpenses}
-
             />
 
             <SummaryCard
-
               title="Balance"
-
               amount={balance}
+            />
 
+            <SummaryCard
+              title="Transactions"
+              amount={totalTransactions}
+              prefix=""
             />
 
           </div>
-            <FinanceChart
-            income={totalIncome}
-            expense={totalExpenses}
-          />
 
         </div>
 
+
+
+
+
+        <FinanceChart
+
+          income={totalIncome}
+
+          expense={totalExpenses}
+
+        />
 
 
 
@@ -310,6 +309,8 @@ function Dashboard() {
 
           </Link>
 
+
+
           <Link to="/create-transaction">
 
             <button className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700">
@@ -321,8 +322,6 @@ function Dashboard() {
           </Link>
 
         </div>
-
-
 
 
 
@@ -366,8 +365,6 @@ function Dashboard() {
           </select>
 
         </div>
-
-
 
 
 
