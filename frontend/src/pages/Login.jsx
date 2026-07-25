@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Login() {
   const { login } = useAuth();
@@ -28,16 +29,17 @@ function Login() {
 
       login(response.data.user, response.data.token);
 
-      alert("Login successful");
+      toast.success("Login successful");
 
       navigate("/dashboard");
     } catch (error) {
       console.log(error.response?.data || error.message);
 
-      alert(
-        error.response?.data?.message ||
-        "Login failed"
-      );
+      toast.error(
+      error.response?.data?.message ||
+      "Login failed"
+     );
+       
     }
   };
 

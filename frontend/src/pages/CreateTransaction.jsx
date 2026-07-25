@@ -52,7 +52,9 @@ function CreateTransaction() {
       );
 
 
-      alert("Transaction added successfully");
+      toast.success(
+      "Transaction added successfully"
+      );
 
 
       navigate("/dashboard");
@@ -64,9 +66,9 @@ function CreateTransaction() {
       console.log(error);
 
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to add transaction"
+      toast.error(
+      error.response?.data?.message ||
+      "Failed to add transaction"
       );
 
 

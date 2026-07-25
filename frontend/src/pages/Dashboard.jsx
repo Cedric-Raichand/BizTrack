@@ -10,6 +10,7 @@ import FinanceChart from "../components/FinanceChart";
 import TransactionTable from "../components/TransactionTable";
 import ExportButtons from "../components/ExportButtons";
 import ExportPDF from "../components/ExportPDF";
+import { toast } from "react-toastify";
 
 function Dashboard() {
 
@@ -97,26 +98,38 @@ function Dashboard() {
 
 
 
-  const deleteTransaction = async (id) => {
+ const deleteTransaction = async (id) => {
 
-    if (!window.confirm("Delete this transaction?")) return;
+  if (!window.confirm("Delete this transaction?")) return;
 
-    try {
 
-      await API.delete(`/transactions/${id}`);
+  try {
 
-      fetchTransactions();
+    await API.delete(`/transactions/${id}`);
 
-    } catch (error) {
 
-      alert(
-        error.response?.data?.message ||
-        "Delete failed"
-      );
+    toast.success(
+      "Transaction deleted successfully"
+    );
 
-    }
 
-  };
+    fetchTransactions();
+
+
+  } catch (error) {
+
+
+    toast.error(
+
+      error.response?.data?.message ||
+      "Delete failed"
+
+    );
+
+
+  }
+
+};
 
 
 
