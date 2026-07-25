@@ -66,7 +66,10 @@ function TransactionTable({
 
               </tr>
 
+
             </thead>
+
+
 
 
 
@@ -77,76 +80,172 @@ function TransactionTable({
 
 
                 <tr
+
                   key={transaction._id}
+
                   className="border-b"
+
                 >
 
 
+
                   <td className="p-3">
-                    {transaction.title}
+
+                    {transaction.title || "No title"}
+
                   </td>
 
 
-                  <td className="p-3">
-                    {transaction.type}
-                  </td>
+
 
 
                   <td className="p-3">
-                    ₵{transaction.amount}
+
+
+                    <span
+
+                      className={
+
+                        transaction.type === "income"
+
+                        ?
+
+                        "bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm"
+
+                        :
+
+                        "bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm"
+
+                      }
+
+                    >
+
+                      {transaction.type}
+
+
+                    </span>
+
+
                   </td>
+
+
+
+
+
+
+
+                  <td className="p-3 font-semibold">
+
+
+                    ₵
+
+                    {Number(transaction.amount)
+
+                    .toLocaleString("en-US")}
+
+
+                  </td>
+
+
+
+
+
 
 
                   <td className="p-3">
-                    {transaction.category}
+
+                    {transaction.category || "N/A"}
+
                   </td>
+
+
+
+
+
+
+
 
 
                   <td className="p-3 space-x-2">
 
 
+
+
+
                     <Link
+
                       to={`/edit-transaction/${transaction._id}`}
+
                     >
 
-                      <button className="bg-blue-600 text-white px-3 py-1 rounded">
+
+                      <button
+
+                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+
+                      >
 
                         Edit
 
+
                       </button>
+
+
 
                     </Link>
 
 
 
+
+
+
+
+
                     <button
 
+
                       onClick={() =>
+
                         onDelete(transaction._id)
+
                       }
 
-                      className="bg-red-600 text-white px-3 py-1 rounded"
+
+                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+
 
                     >
 
                       Delete
 
+
                     </button>
+
+
+
 
 
                   </td>
 
 
+
+
+
                 </tr>
+
 
 
               ))}
 
 
+
             </tbody>
 
 
+
+
           </table>
+
 
 
         </div>
@@ -155,11 +254,14 @@ function TransactionTable({
       )}
 
 
+
     </div>
+
 
   );
 
 }
+
 
 
 export default TransactionTable;
