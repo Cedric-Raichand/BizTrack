@@ -7,6 +7,7 @@ import API from "../api/axios";
 import Layout from "../components/Layout";
 import SummaryCard from "../components/SummaryCard";
 import TransactionTable from "../components/TransactionTable";
+import FinanceChart from "../components/FinanceChart";
 
 function Dashboard() {
 
@@ -284,6 +285,10 @@ function Dashboard() {
             />
 
           </div>
+            <FinanceChart
+            income={totalIncome}
+            expense={totalExpenses}
+          />
 
         </div>
 
