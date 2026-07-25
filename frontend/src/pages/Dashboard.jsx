@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
 import SummaryCard from "../components/SummaryCard";
+import Layout from "../components/Layout";
 
 
 function Dashboard() {
@@ -143,8 +144,7 @@ function Dashboard() {
 
 
   return (
-
-    <div>
+    <Layout><div>
 
 
       <h1>
@@ -475,6 +475,9 @@ function Dashboard() {
 
 
     </div>
+    </Layout>
+
+    
 
   );
 
