@@ -25,6 +25,10 @@ function Login() {
 
 
 
+  const [loading, setLoading] = useState(false);
+
+
+
 
 
   const handleChange = (e) => {
@@ -43,12 +47,17 @@ function Login() {
 
 
 
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
 
     try {
+
+
+      setLoading(true);
+
 
 
       const response = await API.post(
@@ -58,6 +67,7 @@ function Login() {
         formData
 
       );
+
 
 
 
@@ -71,11 +81,14 @@ function Login() {
 
 
 
+
       toast.success(
 
         "Login successful"
 
       );
+
+
 
 
 
@@ -87,7 +100,9 @@ function Login() {
 
 
 
+
     } catch(error) {
+
 
 
       console.log(
@@ -95,6 +110,8 @@ function Login() {
         error.response?.data
 
       );
+
+
 
 
 
@@ -107,6 +124,14 @@ function Login() {
       );
 
 
+
+
+    } finally {
+
+
+      setLoading(false);
+
+
     }
 
 
@@ -116,7 +141,9 @@ function Login() {
 
 
 
+
   return (
+
 
     <div>
 
@@ -126,6 +153,8 @@ function Login() {
         Login
 
       </h1>
+
+
 
 
 
@@ -144,7 +173,11 @@ function Login() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
+
+
 
 
 
@@ -160,15 +193,37 @@ function Login() {
 
           onChange={handleChange}
 
+          disabled={loading}
+
         />
 
 
 
-        <button type="submit">
 
-          Login
+
+
+        <button
+
+          type="submit"
+
+          disabled={loading}
+
+        >
+
+          {
+
+            loading ?
+
+            "Logging in..." :
+
+            "Login"
+
+          }
+
 
         </button>
+
+
 
 
 
@@ -176,7 +231,10 @@ function Login() {
 
 
 
+
+
     </div>
+
 
   );
 
