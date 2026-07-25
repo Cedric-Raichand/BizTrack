@@ -2,14 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
-import Layout from "../components/Layout";
+import { toast } from "react-toastify";
 
 
 function CreateTransaction() {
 
-
   const navigate = useNavigate();
-
 
 
   const [formData, setFormData] = useState({
@@ -21,6 +19,7 @@ function CreateTransaction() {
     description: ""
 
   });
+
 
 
 
@@ -38,6 +37,8 @@ function CreateTransaction() {
 
 
 
+
+
   const handleSubmit = async (e) => {
 
     e.preventDefault();
@@ -47,192 +48,187 @@ function CreateTransaction() {
 
 
       await API.post(
+
         "/transactions",
+
         formData
+
       );
+
 
 
       toast.success(
-      "Transaction added successfully"
+        "Transaction added successfully"
       );
+
 
 
       navigate("/dashboard");
 
 
-    } catch(error) {
 
-
-      console.log(error);
+    } catch (error) {
 
 
       toast.error(
-      error.response?.data?.message ||
-      "Failed to add transaction"
+
+        error.response?.data?.message ||
+
+        "Failed to add transaction"
+
       );
 
 
     }
 
+
   };
+
+
 
 
 
   return (
 
-    <Layout>
+    <div>
 
 
-      <div className="max-w-xl mx-auto">
+      <h1>
+        Add Transaction
+      </h1>
 
 
-        <div className="bg-white shadow rounded-xl p-8">
 
+      <form onSubmit={handleSubmit}>
 
-          <h1 className="text-3xl font-bold mb-6">
-            Add Transaction
-          </h1>
 
+        <select
 
+          name="type"
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
+          value={formData.type}
 
+          onChange={handleChange}
 
+        >
 
-            <select
+          <option value="income">
+            Income
+          </option>
 
-              name="type"
 
-              value={formData.type}
+          <option value="expense">
+            Expense
+          </option>
 
-              onChange={handleChange}
 
-              className="w-full border rounded-lg p-3"
+        </select>
 
-            >
 
-              <option value="income">
-                Income
-              </option>
 
 
-              <option value="expense">
-                Expense
-              </option>
+        <br /><br />
 
 
-            </select>
 
+        <input
 
+          type="text"
 
+          name="title"
 
-            <input
+          placeholder="Title"
 
-              type="text"
+          value={formData.title}
 
-              name="title"
+          onChange={handleChange}
 
-              placeholder="Transaction title"
+        />
 
-              value={formData.title}
 
-              onChange={handleChange}
 
-              className="w-full border rounded-lg p-3"
 
-              required
+        <br /><br />
 
-            />
 
 
 
+        <input
 
-            <input
+          type="number"
 
-              type="number"
+          name="amount"
 
-              name="amount"
+          placeholder="Amount"
 
-              placeholder="Amount"
+          value={formData.amount}
 
-              value={formData.amount}
+          onChange={handleChange}
 
-              onChange={handleChange}
+        />
 
-              className="w-full border rounded-lg p-3"
 
-              required
 
-            />
 
+        <br /><br />
 
 
 
-            <input
 
-              type="text"
+        <input
 
-              name="category"
+          type="text"
 
-              placeholder="Category"
+          name="category"
 
-              value={formData.category}
+          placeholder="Category"
 
-              onChange={handleChange}
+          value={formData.category}
 
-              className="w-full border rounded-lg p-3"
+          onChange={handleChange}
 
-            />
+        />
 
 
 
 
-            <textarea
+        <br /><br />
 
-              name="description"
 
-              placeholder="Description"
 
-              value={formData.description}
 
-              onChange={handleChange}
+        <textarea
 
-              className="w-full border rounded-lg p-3"
+          name="description"
 
-              rows="4"
+          placeholder="Description"
 
-            />
+          value={formData.description}
 
+          onChange={handleChange}
 
+        />
 
 
-            <button
 
-              type="submit"
 
-              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+        <br /><br />
 
-            >
 
-              Save Transaction
 
-            </button>
 
+        <button type="submit">
 
+          Save Transaction
 
-          </form>
+        </button>
 
 
-        </div>
 
+      </form>
 
-      </div>
 
-
-    </Layout>
+    </div>
 
   );
 
