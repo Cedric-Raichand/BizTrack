@@ -1,21 +1,18 @@
-function SummaryCard({ title, value }) {
+function SummaryCard({ title, amount }) {
 
   return (
+    <div className="bg-white shadow rounded-xl p-6">
 
-    <div>
-
-      <h3>
+      <h3 className="text-gray-500 text-sm font-medium">
         {title}
       </h3>
 
-      <h2>
-        ₵{value}
-      </h2>
+      <p className="text-3xl font-bold mt-3">
+        ₵{amount}
+      </p>
 
     </div>
-
   );
-
 }
 
 export default SummaryCard;

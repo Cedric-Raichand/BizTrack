@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 import API from "../api/axios";
-import SummaryCard from "../components/SummaryCard";
+
 import Layout from "../components/Layout";
+import SummaryCard from "../components/SummaryCard";
 
 
 function Dashboard() {
 
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
 
   const [business, setBusiness] = useState(null);
@@ -24,7 +26,6 @@ function Dashboard() {
     fetchTransactions();
 
   }, []);
-
 
 
 
@@ -47,8 +48,6 @@ function Dashboard() {
 
 
 
-
-
   const fetchTransactions = async () => {
 
     try {
@@ -68,45 +67,10 @@ function Dashboard() {
 
 
 
-
-
-
-  const deleteTransaction = async (id) => {
-
-    try {
-
-
-      await API.delete(`/transactions/${id}`);
-
-
-      alert("Transaction deleted successfully");
-
-
-      fetchTransactions();
-
-
-    } catch(error) {
-
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to delete transaction"
-      );
-
-
-    }
-
-  };
-
-
-
-
-
-
   const totalIncome = transactions
 
     .filter(
-      transaction => transaction.type === "income"
+      (transaction) => transaction.type === "income"
     )
 
     .reduce(
@@ -117,12 +81,10 @@ function Dashboard() {
 
 
 
-
-
-  const totalExpense = transactions
+  const totalExpenses = transactions
 
     .filter(
-      transaction => transaction.type === "expense"
+      (transaction) => transaction.type === "expense"
     )
 
     .reduce(
@@ -133,351 +95,280 @@ function Dashboard() {
 
 
 
-
-
-  const balance = totalIncome - totalExpense;
-
-
-
-
+  const balance = totalIncome - totalExpenses;
 
 
 
   return (
-    <Layout><div>
+
+    <Layout>
+
+      <div className="space-y-8">
 
 
-      <h1>
-        Welcome, {user?.name}
-      </h1>
+        {/* Welcome Section */}
+
+        <div>
+
+          <h1 className="text-3xl font-bold">
+            Welcome, {user?.name}
+          </h1>
 
 
-      <p>
-        {user?.email}
-      </p>
+          <p className="text-gray-500">
+            {user?.email}
+          </p>
 
-
-
-      <hr />
-
-
-
-
-      <h2>
-        Business Information
-      </h2>
+        </div>
 
 
 
-      {
-        business ? (
 
-          <div>
+        {/* Business Information */}
+
+        <div className="bg-white shadow rounded-xl p-6">
 
 
-            <p>
-              <strong>Name:</strong> {business.businessName}
+          <h2 className="text-2xl font-bold mb-4">
+            Business Information
+          </h2>
+
+
+
+          {business ? (
+
+            <div className="space-y-2">
+
+
+              <p>
+                <strong>Name:</strong>{" "}
+                {business.businessName}
+              </p>
+
+
+              <p>
+                <strong>Category:</strong>{" "}
+                {business.category}
+              </p>
+
+
+              <p>
+                <strong>Description:</strong>{" "}
+                {business.description}
+              </p>
+
+
+              <p>
+                <strong>Location:</strong>{" "}
+                {business.location}
+              </p>
+
+
+            </div>
+
+
+          ) : (
+
+            <p className="text-gray-500">
+              No business found.
             </p>
 
-
-            <p>
-              <strong>Category:</strong> {business.category}
-            </p>
+          )}
 
 
-            <p>
-              <strong>Description:</strong> {business.description}
-            </p>
+        </div>
 
 
-            <p>
-              <strong>Location:</strong> {business.location}
-            </p>
+
+
+
+        {/* Summary Cards */}
+
+        <div>
+
+
+          <h2 className="text-2xl font-bold mb-5">
+            Financial Summary
+          </h2>
+
+
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+
+            <SummaryCard
+              title="Total Income"
+              amount={totalIncome}
+            />
+
+
+            <SummaryCard
+              title="Total Expenses"
+              amount={totalExpenses}
+            />
+
+
+            <SummaryCard
+              title="Balance"
+              amount={balance}
+            />
 
 
           </div>
 
 
-        ) : (
+        </div>
 
-          <p>
-            No business found
-          </p>
 
-        )
-      }
 
 
 
 
+        {/* Actions */}
 
-      <hr />
+        <div className="flex gap-4">
 
 
+          <Link to="/create-business">
 
+            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700">
 
+              Create Business
 
-      <h2>
-       Financial Summary
-      </h2>
+            </button>
 
+          </Link>
 
-     <div>
 
-      <SummaryCard
-     title="Total Income"
-     value={totalIncome}
-     />
 
+          <Link to="/create-transaction">
 
-   <SummaryCard
-    title="Total Expenses"
-    value={totalExpense}
-   />
+            <button className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700">
 
+              Add Transaction
 
-   <SummaryCard
-    title="Balance"
-    value={balance}
-   />
+            </button>
 
-   </div>
+          </Link>
 
 
-      <div>
+        </div>
 
 
-        <p>
-          Total Income:
-          ₵{totalIncome}
-        </p>
 
 
 
-        <p>
-          Total Expenses:
-          ₵{totalExpense}
-        </p>
 
 
+        {/* Transactions */}
 
-        <p>
-          Balance:
-          ₵{balance}
-        </p>
+        <div className="bg-white shadow rounded-xl p-6">
 
 
+          <h2 className="text-2xl font-bold mb-5">
+            Transactions
+          </h2>
 
-      </div>
 
 
+          {transactions.length === 0 ? (
 
+            <p className="text-gray-500">
+              No transactions yet.
+            </p>
 
 
-      <hr />
+          ) : (
 
 
+            <table className="w-full border-collapse">
 
 
+              <thead>
 
-      <Link to="/create-business">
+                <tr className="border-b">
 
-        <button>
-          Create Business
-        </button>
 
-      </Link>
+                  <th className="text-left p-3">
+                    Title
+                  </th>
 
 
+                  <th className="text-left p-3">
+                    Type
+                  </th>
 
-      {" "}
 
+                  <th className="text-left p-3">
+                    Amount
+                  </th>
 
 
-      <Link to="/create-transaction">
+                  <th className="text-left p-3">
+                    Category
+                  </th>
 
-        <button>
-          Add Transaction
-        </button>
 
-      </Link>
+                </tr>
 
 
+              </thead>
 
 
-      {" "}
 
+              <tbody>
 
 
-      <button onClick={logout}>
+                {transactions.map((transaction)=>(
 
-        Logout
+                  <tr 
+                    key={transaction._id}
+                    className="border-b"
+                  >
 
-      </button>
 
-
-
-
-
-      <hr />
-
-
-
-
-
-      <h2>
-        Transactions
-      </h2>
-
-
-
-
-
-      {
-        transactions.length === 0 ? (
-
-          <p>
-            No transactions yet.
-          </p>
-
-
-        ) : (
-
-
-          <table border="1" cellPadding="8">
-
-
-            <thead>
-
-
-              <tr>
-
-                <th>
-                  Title
-                </th>
-
-
-                <th>
-                  Type
-                </th>
-
-
-                <th>
-                  Amount
-                </th>
-
-
-                <th>
-                  Category
-                </th>
-
-
-                <th>
-                  Action
-                </th>
-
-
-              </tr>
-
-
-            </thead>
-
-
-
-
-
-            <tbody>
-
-
-              {
-                transactions.map((transaction) => (
-
-
-                  <tr key={transaction._id}>
-
-
-                    <td>
+                    <td className="p-3">
                       {transaction.title}
                     </td>
 
 
-                    <td>
+                    <td className="p-3">
                       {transaction.type}
                     </td>
 
 
-                    <td>
+                    <td className="p-3">
                       ₵{transaction.amount}
                     </td>
 
 
-                    <td>
+                    <td className="p-3">
                       {transaction.category}
                     </td>
-
-
-
-                    <td>
-
-
-                      <Link
-                        to={`/edit-transaction/${transaction._id}`}
-                      >
-
-                        <button>
-                          Edit
-                        </button>
-
-
-                      </Link>
-
-
-
-                      {" "}
-
-
-
-                      <button
-                        onClick={() =>
-                          deleteTransaction(transaction._id)
-                        }
-                      >
-
-                        Delete
-
-                      </button>
-
-
-
-                    </td>
-
 
 
                   </tr>
 
 
-                ))
-              }
+                ))}
 
 
-
-            </tbody>
-
+              </tbody>
 
 
-          </table>
+            </table>
 
 
-        )
-      }
+          )}
 
 
+        </div>
 
 
-    </div>
+      </div>
+
+
     </Layout>
-
-    
 
   );
 
