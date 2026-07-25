@@ -1,5 +1,4 @@
-function SummaryCard({ title, amount }) {
-
+function SummaryCard({ title, amount, prefix = "₵" }) {
   return (
     <div className="bg-white shadow rounded-xl p-6">
 
@@ -8,7 +7,7 @@ function SummaryCard({ title, amount }) {
       </h3>
 
       <p className="text-3xl font-bold mt-3">
-        ₵{amount}
+        {prefix}{amount}
       </p>
 
     </div>
