@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 
 
 
+
 // Add transaction
 
 const addTransaction = async (req, res) => {
 
   try {
-
 
     const {
       businessId,
@@ -21,9 +21,6 @@ const addTransaction = async (req, res) => {
     } = req.body;
 
 
-
-
-    // Validation
 
     if (
       !businessId ||
@@ -61,8 +58,7 @@ const addTransaction = async (req, res) => {
 
 
 
-
-    if (Number(amount) <= 0) {
+    if(Number(amount) <= 0){
 
       return res.status(400).json({
 
@@ -77,14 +73,11 @@ const addTransaction = async (req, res) => {
 
 
 
-
-    // Check selected business belongs to user
-
     const business = await Business.findOne({
 
       _id: businessId,
 
-      owner: req.user.id
+      owner:req.user.id
 
     });
 
@@ -92,12 +85,11 @@ const addTransaction = async (req, res) => {
 
 
 
-    if (!business) {
+    if(!business){
 
       return res.status(404).json({
 
-        message:
-        "Business not found"
+        message:"Business not found"
 
       });
 
@@ -107,19 +99,17 @@ const addTransaction = async (req, res) => {
 
 
 
-
-
     const transaction = await Transaction.create({
 
-      business: business._id,
+      business:business._id,
 
       type,
 
-      title: title.trim(),
+      title:title.trim(),
 
-      amount: Number(amount),
+      amount:Number(amount),
 
-      category: category.trim(),
+      category:category.trim(),
 
       description:
       description ? description.trim() : ""
@@ -130,12 +120,9 @@ const addTransaction = async (req, res) => {
 
 
 
-
-
     res.status(201).json({
 
-      message:
-      "Transaction added successfully",
+      message:"Transaction added successfully",
 
       transaction
 
@@ -144,15 +131,14 @@ const addTransaction = async (req, res) => {
 
 
 
-  } catch(error) {
 
+  }catch(error){
 
     res.status(500).json({
 
       message:error.message
 
     });
-
 
   }
 
@@ -168,8 +154,7 @@ const addTransaction = async (req, res) => {
 
 // Get all transactions
 
-const getTransactions = async (req,res)=>{
-
+const getTransactions = async(req,res)=>{
 
 try{
 
@@ -192,7 +177,6 @@ limit=10
 
 
 
-
 if(!businessId){
 
 return res.status(400).json({
@@ -207,7 +191,6 @@ message:"Business ID is required"
 
 
 
-
 const business = await Business.findOne({
 
 _id:businessId,
@@ -215,7 +198,6 @@ _id:businessId,
 owner:req.user.id
 
 });
-
 
 
 
@@ -235,14 +217,11 @@ message:"Business not found"
 
 
 
-
 let filter={
 
 business:businessId
 
 };
-
-
 
 
 
@@ -258,8 +237,7 @@ filter.type=type;
 
 
 
-
-const now = new Date();
+const now=new Date();
 
 
 
@@ -267,8 +245,7 @@ const now = new Date();
 
 if(period==="today"){
 
-
-const start = new Date(now);
+const start=new Date(now);
 
 start.setHours(0,0,0,0);
 
@@ -279,10 +256,7 @@ $gte:start
 
 };
 
-
 }
-
-
 
 
 
@@ -307,8 +281,6 @@ now.getMonth(),
 
 
 }
-
-
 
 
 
@@ -356,11 +328,8 @@ createdAt:-1
 
 
 
-
-
 const total =
 await Transaction.countDocuments(filter);
-
 
 
 
@@ -381,15 +350,14 @@ transactions
 
 
 
-}catch(error){
 
+}catch(error){
 
 res.status(500).json({
 
 message:error.message
 
 });
-
 
 }
 
@@ -407,7 +375,6 @@ message:error.message
 // Get single transaction
 
 const getTransactionById = async(req,res)=>{
-
 
 try{
 
@@ -435,7 +402,6 @@ await Transaction.findById(req.params.id);
 
 
 
-
 if(!transaction){
 
 return res.status(404).json({
@@ -450,21 +416,45 @@ message:"Transaction not found"
 
 
 
+const business = await Business.findOne({
+
+_id:transaction.business,
+
+owner:req.user.id
+
+});
+
+
+
+
+
+if(!business){
+
+return res.status(403).json({
+
+message:"Not authorized"
+
+});
+
+}
+
+
+
+
 
 res.json(transaction);
 
 
 
 
-}catch(error){
 
+}catch(error){
 
 res.status(500).json({
 
 message:error.message
 
 });
-
 
 }
 
@@ -483,7 +473,6 @@ message:error.message
 
 const updateTransaction = async(req,res)=>{
 
-
 try{
 
 
@@ -500,8 +489,6 @@ category,
 description
 
 }=req.body;
-
-
 
 
 
@@ -526,8 +513,6 @@ message:
 
 
 
-
-
 if(
 amount &&
 Number(amount)<=0
@@ -547,12 +532,8 @@ message:
 
 
 
-
-
-
 const transaction =
 await Transaction.findById(req.params.id);
-
 
 
 
@@ -572,6 +553,30 @@ message:"Transaction not found"
 
 
 
+const business = await Business.findOne({
+
+_id:transaction.business,
+
+owner:req.user.id
+
+});
+
+
+
+
+
+if(!business){
+
+return res.status(403).json({
+
+message:"Not authorized"
+
+});
+
+}
+
+
+
 
 
 const updatedTransaction =
@@ -581,30 +586,40 @@ req.params.id,
 
 {
 
-type,
 
-title:title ?
+type:type || transaction.type,
+
+
+title:title
+?
 title.trim()
 :
 transaction.title,
 
 
-amount:amount ?
+
+amount:amount
+?
 Number(amount)
 :
 transaction.amount,
 
 
-category:category ?
+
+category:category
+?
 category.trim()
 :
 transaction.category,
 
 
-description:description ?
+
+description:description
+?
 description.trim()
 :
 transaction.description
+
 
 },
 
@@ -622,8 +637,7 @@ new:true
 
 res.json({
 
-message:
-"Transaction updated successfully",
+message:"Transaction updated successfully",
 
 transaction:updatedTransaction
 
@@ -633,16 +647,13 @@ transaction:updatedTransaction
 
 
 
-
 }catch(error){
-
 
 res.status(500).json({
 
 message:error.message
 
 });
-
 
 }
 
@@ -661,7 +672,6 @@ message:error.message
 
 const deleteTransaction = async(req,res)=>{
 
-
 try{
 
 
@@ -672,9 +682,7 @@ await Transaction.findById(req.params.id);
 
 
 
-
 if(!transaction){
-
 
 return res.status(404).json({
 
@@ -682,9 +690,33 @@ message:"Transaction not found"
 
 });
 
-
 }
 
+
+
+
+
+const business = await Business.findOne({
+
+_id:transaction.business,
+
+owner:req.user.id
+
+});
+
+
+
+
+
+if(!business){
+
+return res.status(403).json({
+
+message:"Not authorized"
+
+});
+
+}
 
 
 
@@ -696,26 +728,23 @@ await transaction.deleteOne();
 
 
 
-
 res.json({
 
-message:
-"Transaction deleted successfully"
+message:"Transaction deleted successfully"
 
 });
+
 
 
 
 
 }catch(error){
 
-
 res.status(500).json({
 
 message:error.message
 
 });
-
 
 }
 
@@ -729,7 +758,9 @@ message:error.message
 
 
 
+
 module.exports = {
+
 
 addTransaction,
 
@@ -740,5 +771,6 @@ getTransactionById,
 updateTransaction,
 
 deleteTransaction
+
 
 };
