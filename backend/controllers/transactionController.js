@@ -3,12 +3,16 @@ const Business = require("../models/Business");
 const mongoose = require("mongoose");
 
 
+
 // Add transaction
+
 const addTransaction = async (req, res) => {
 
   try {
 
+
     const {
+      businessId,
       type,
       title,
       amount,
@@ -17,49 +21,92 @@ const addTransaction = async (req, res) => {
     } = req.body;
 
 
+
+
     // Validation
 
-    if (!type || !title || !amount || !category) {
+    if (
+      !businessId ||
+      !type ||
+      !title ||
+      !amount ||
+      !category
+    ) {
 
       return res.status(400).json({
-        message: "Type, title, amount and category are required"
+
+        message:
+        "Business, type, title, amount and category are required"
+
       });
 
     }
 
 
-    if (!["income", "expense"].includes(type)) {
+
+
+    if (
+      !["income", "expense"].includes(type)
+    ) {
 
       return res.status(400).json({
-        message: "Transaction type must be income or expense"
+
+        message:
+        "Transaction type must be income or expense"
+
       });
 
     }
+
+
+
 
 
     if (Number(amount) <= 0) {
 
       return res.status(400).json({
-        message: "Amount must be greater than zero"
+
+        message:
+        "Amount must be greater than zero"
+
       });
 
     }
 
 
-    // Find user's business
+
+
+
+
+    // Check selected business belongs to user
 
     const business = await Business.findOne({
-      owner: req.user.id,
+
+      _id: businessId,
+
+      owner: req.user.id
+
     });
+
+
+
 
 
     if (!business) {
 
       return res.status(404).json({
-        message: "Create a business first"
+
+        message:
+        "Business not found"
+
       });
 
     }
+
+
+
+
+
 
 
     const transaction = await Transaction.create({
@@ -74,347 +121,624 @@ const addTransaction = async (req, res) => {
 
       category: category.trim(),
 
-      description: description ? description.trim() : "",
+      description:
+      description ? description.trim() : ""
 
     });
+
+
+
+
+
 
 
     res.status(201).json({
 
-      message: "Transaction added successfully",
+      message:
+      "Transaction added successfully",
 
-      transaction,
+      transaction
 
     });
 
 
-  } catch (error) {
+
+
+  } catch(error) {
+
 
     res.status(500).json({
-      message: error.message
+
+      message:error.message
+
     });
+
 
   }
 
 };
+
+
+
+
+
 
 
 
 
 // Get all transactions
 
-const getTransactions = async (req, res) => {
-
-  try {
-
-    const business = await Business.findOne({
-      owner: req.user.id
-    });
+const getTransactions = async (req,res)=>{
 
 
-    if (!business) {
-
-      return res.status(404).json({
-        message: "Business not found"
-      });
-
-    }
+try{
 
 
-    const {
-      type,
-      period,
-      page = 1,
-      limit = 10
-    } = req.query;
+const {
+
+businessId,
+
+type,
+
+period,
+
+page=1,
+
+limit=10
+
+}=req.query;
 
 
-    let filter = {
-      business: business._id
-    };
 
 
-    // Filter by transaction type
-
-    if (type) {
-
-      filter.type = type;
-
-    }
 
 
-    // Filter by period
+if(!businessId){
 
-    const now = new Date();
+return res.status(400).json({
 
+message:"Business ID is required"
 
-    if (period === "today") {
+});
 
-      const startOfDay = new Date(now);
-
-      startOfDay.setHours(0, 0, 0, 0);
-
-      filter.createdAt = {
-        $gte: startOfDay
-      };
-
-    }
+}
 
 
-    if (period === "month") {
-
-      filter.createdAt = {
-
-        $gte: new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          1
-        )
-
-      };
-
-    }
 
 
-    if (period === "year") {
-
-      filter.createdAt = {
-
-        $gte: new Date(
-          now.getFullYear(),
-          0,
-          1
-        )
-
-      };
-
-    }
 
 
-    const transactions = await Transaction.find(filter)
+const business = await Business.findOne({
 
-      .sort({
-        createdAt: -1
-      })
+_id:businessId,
 
-      .skip((page - 1) * Number(limit))
+owner:req.user.id
 
-      .limit(Number(limit));
+});
 
 
-    const total = await Transaction.countDocuments(filter);
 
 
-    res.json({
-
-      total,
-
-      page: Number(page),
-
-      pages: Math.ceil(total / Number(limit)),
-
-      transactions
-
-    });
 
 
-  } catch (error) {
+if(!business){
 
-    res.status(500).json({
-      message: error.message
-    });
+return res.status(404).json({
 
-  }
+message:"Business not found"
+
+});
+
+}
+
+
+
+
+
+
+let filter={
+
+business:businessId
 
 };
+
+
+
+
+
+
+
+if(type){
+
+filter.type=type;
+
+}
+
+
+
+
+
+
+const now = new Date();
+
+
+
+
+
+if(period==="today"){
+
+
+const start = new Date(now);
+
+start.setHours(0,0,0,0);
+
+
+filter.createdAt={
+
+$gte:start
+
+};
+
+
+}
+
+
+
+
+
+
+
+if(period==="month"){
+
+
+filter.createdAt={
+
+$gte:new Date(
+
+now.getFullYear(),
+
+now.getMonth(),
+
+1
+
+)
+
+};
+
+
+}
+
+
+
+
+
+
+
+if(period==="year"){
+
+
+filter.createdAt={
+
+$gte:new Date(
+
+now.getFullYear(),
+
+0,
+
+1
+
+)
+
+};
+
+
+}
+
+
+
+
+
+
+
+const transactions = await Transaction.find(filter)
+
+.sort({
+
+createdAt:-1
+
+})
+
+.skip((page-1)*Number(limit))
+
+.limit(Number(limit));
+
+
+
+
+
+
+
+const total =
+await Transaction.countDocuments(filter);
+
+
+
+
+
+
+res.json({
+
+total,
+
+page:Number(page),
+
+pages:Math.ceil(total/Number(limit)),
+
+transactions
+
+});
+
+
+
+
+}catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
+
+};
+
+
+
+
+
 
 
 
 
 // Get single transaction
 
-const getTransactionById = async (req, res) => {
-
-  try {
-
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-
-      return res.status(400).json({
-        message: "Invalid transaction ID"
-      });
-
-    }
+const getTransactionById = async(req,res)=>{
 
 
-    const transaction = await Transaction.findById(req.params.id);
+try{
 
 
-    if (!transaction) {
+if(
+!mongoose.Types.ObjectId.isValid(req.params.id)
+){
 
-      return res.status(404).json({
-        message: "Transaction not found"
-      });
+return res.status(400).json({
 
-    }
+message:"Invalid transaction ID"
+
+});
+
+}
 
 
-    res.json(transaction);
 
 
-  } catch (error) {
 
-    res.status(500).json({
-      message: error.message
-    });
+const transaction =
+await Transaction.findById(req.params.id);
 
-  }
+
+
+
+
+
+if(!transaction){
+
+return res.status(404).json({
+
+message:"Transaction not found"
+
+});
+
+}
+
+
+
+
+
+
+res.json(transaction);
+
+
+
+
+}catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 };
+
+
+
+
+
 
 
 
 
 // Update transaction
 
-const updateTransaction = async (req, res) => {
-
-  try {
-
-    const {
-      type,
-      title,
-      amount,
-      category,
-      description
-    } = req.body;
+const updateTransaction = async(req,res)=>{
 
 
-    if (type && !["income", "expense"].includes(type)) {
-
-      return res.status(400).json({
-        message: "Transaction type must be income or expense"
-      });
-
-    }
+try{
 
 
-    if (amount && Number(amount) <= 0) {
+const {
 
-      return res.status(400).json({
-        message: "Amount must be greater than zero"
-      });
+type,
 
-    }
+title,
 
+amount,
 
-    const transaction = await Transaction.findById(req.params.id);
+category,
 
+description
 
-    if (!transaction) {
-
-      return res.status(404).json({
-        message: "Transaction not found"
-      });
-
-    }
+}=req.body;
 
 
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
-
-      req.params.id,
-
-      {
-
-        type,
-
-        title: title ? title.trim() : transaction.title,
-
-        amount: amount ? Number(amount) : transaction.amount,
-
-        category: category ? category.trim() : transaction.category,
-
-        description: description ? description.trim() : transaction.description
-
-      },
-
-      {
-        new: true
-      }
-
-    );
 
 
-    res.json({
-
-      message: "Transaction updated successfully",
-
-      transaction: updatedTransaction
-
-    });
 
 
-  } catch (error) {
 
-    res.status(500).json({
-      message: error.message
-    });
+if(
+type &&
+!["income","expense"].includes(type)
 
-  }
+){
+
+return res.status(400).json({
+
+message:
+"Transaction type must be income or expense"
+
+});
+
+}
+
+
+
+
+
+
+
+if(
+amount &&
+Number(amount)<=0
+
+){
+
+return res.status(400).json({
+
+message:
+"Amount must be greater than zero"
+
+});
+
+}
+
+
+
+
+
+
+
+
+const transaction =
+await Transaction.findById(req.params.id);
+
+
+
+
+
+
+if(!transaction){
+
+return res.status(404).json({
+
+message:"Transaction not found"
+
+});
+
+}
+
+
+
+
+
+
+
+const updatedTransaction =
+await Transaction.findByIdAndUpdate(
+
+req.params.id,
+
+{
+
+type,
+
+title:title ?
+title.trim()
+:
+transaction.title,
+
+
+amount:amount ?
+Number(amount)
+:
+transaction.amount,
+
+
+category:category ?
+category.trim()
+:
+transaction.category,
+
+
+description:description ?
+description.trim()
+:
+transaction.description
+
+},
+
+
+{
+new:true
+}
+
+);
+
+
+
+
+
+
+res.json({
+
+message:
+"Transaction updated successfully",
+
+transaction:updatedTransaction
+
+});
+
+
+
+
+
+
+}catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 };
+
+
+
+
+
 
 
 
 
 // Delete transaction
 
-const deleteTransaction = async (req, res) => {
-
-  try {
-
-    const transaction = await Transaction.findById(req.params.id);
+const deleteTransaction = async(req,res)=>{
 
 
-    if (!transaction) {
-
-      return res.status(404).json({
-        message: "Transaction not found"
-      });
-
-    }
+try{
 
 
-    await transaction.deleteOne();
+const transaction =
+await Transaction.findById(req.params.id);
 
 
-    res.json({
-      message: "Transaction deleted successfully"
-    });
 
 
-  } catch (error) {
 
-    res.status(500).json({
-      message: error.message
-    });
 
-  }
+if(!transaction){
+
+
+return res.status(404).json({
+
+message:"Transaction not found"
+
+});
+
+
+}
+
+
+
+
+
+
+await transaction.deleteOne();
+
+
+
+
+
+
+res.json({
+
+message:
+"Transaction deleted successfully"
+
+});
+
+
+
+
+}catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 };
 
 
 
 
+
+
+
+
 module.exports = {
 
-  addTransaction,
+addTransaction,
 
-  getTransactions,
+getTransactions,
 
-  getTransactionById,
+getTransactionById,
 
-  updateTransaction,
+updateTransaction,
 
-  deleteTransaction
+deleteTransaction
 
 };

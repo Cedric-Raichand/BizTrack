@@ -2,46 +2,41 @@ const express = require("express");
 
 const router = express.Router();
 
-
-const {
-  createBusiness,
-  getBusiness,
-  getBusinesses,
-} = require("../controllers/businessController");
-
-
 const protect = require("../middleware/authMiddleware");
 
 
+const {
 
-// Create business
+createBusiness,
+
+getBusiness,
+
+getBusinesses
+
+}=require("../controllers/businessController");
+
+
 
 router.post(
-  "/",
-  protect,
-  createBusiness
+"/",
+protect,
+createBusiness
 );
 
 
 
-
-// Get all businesses
-
 router.get(
-  "/all",
-  protect,
-  getBusinesses
+"/",
+protect,
+getBusiness
 );
 
 
 
-
-// Get single/default business (keep for now)
-
 router.get(
-  "/",
-  protect,
-  getBusiness
+"/all",
+protect,
+getBusinesses
 );
 
 

@@ -2,56 +2,58 @@ const Business = require("../models/Business");
 
 
 
-// Create Business
+// Create business
 
-const createBusiness = async (req, res) => {
+const createBusiness = async (req,res)=>{
 
-  try {
-
-    const {
-      businessName,
-      category,
-      description,
-      location
-    } = req.body;
+try{
 
 
-
-    const business = await Business.create({
-
-      owner: req.user.id,
-
-      businessName,
-
-      category,
-
-      description,
-
-      location,
-
-    });
+const {
+businessName,
+category,
+description,
+location
+}=req.body;
 
 
 
-    res.status(201).json({
+const business = await Business.create({
 
-      message: "Business created successfully",
+owner:req.user.id,
 
-      business,
+businessName,
 
-    });
+category,
+
+description,
+
+location
+
+});
 
 
 
-  } catch (error) {
+res.status(201).json({
 
-    res.status(500).json({
+message:"Business created successfully",
 
-      message: error.message,
+business
 
-    });
+});
 
-  }
+
+
+}catch(error){
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+}
+
 
 };
 
@@ -60,37 +62,38 @@ const createBusiness = async (req, res) => {
 
 
 
+// Get first business (old)
 
-// Get all businesses owned by logged in user
-
-const getBusinesses = async (req, res) => {
-
-  try {
+const getBusiness = async(req,res)=>{
 
 
-    const businesses = await Business.find({
-
-      owner: req.user.id,
-
-    });
+try{
 
 
+const business = await Business.findOne({
 
-    res.json(businesses);
+owner:req.user.id
+
+});
 
 
 
-  } catch (error) {
+res.json(business);
 
 
-    res.status(500).json({
 
-      message: error.message,
-
-    });
+}catch(error){
 
 
-  }
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 };
 
@@ -99,41 +102,44 @@ const getBusinesses = async (req, res) => {
 
 
 
+// NEW: Get all businesses
 
-// Get one business (we keep this for now)
-
-const getBusiness = async (req, res) => {
-
-  try {
+const getBusinesses = async(req,res)=>{
 
 
-    const business = await Business.findOne({
-
-      owner: req.user.id,
-
-    });
+try{
 
 
+const businesses = await Business.find({
 
-    res.json(business);
+owner:req.user.id
 
+}).sort({
 
+createdAt:-1
 
-  } catch (error) {
-
-
-    res.status(500).json({
-
-      message: error.message,
-
-    });
+});
 
 
-  }
+
+res.json(businesses);
+
+
+
+}catch(error){
+
+
+res.status(500).json({
+
+message:error.message
+
+});
+
+
+}
+
 
 };
-
-
 
 
 
@@ -141,10 +147,10 @@ const getBusiness = async (req, res) => {
 
 module.exports = {
 
-  createBusiness,
+createBusiness,
 
-  getBusinesses,
+getBusiness,
 
-  getBusiness,
+getBusinesses
 
 };

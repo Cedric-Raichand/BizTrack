@@ -3,23 +3,29 @@ import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
 import { toast } from "react-toastify";
+import { useBusiness } from "../context/BusinessContext";
 
 
 function CreateTransaction() {
 
+
   const navigate = useNavigate();
 
 
-  const [loading, setLoading] = useState(false);
+  const { selectedBusiness } = useBusiness();
 
 
 
   const [formData, setFormData] = useState({
 
     type: "income",
+
     title: "",
+
     amount: "",
+
     category: "",
+
     description: ""
 
   });
@@ -27,7 +33,9 @@ function CreateTransaction() {
 
 
 
-  const handleChange = (e) => {
+
+  const handleChange = (e)=>{
+
 
     setFormData({
 
@@ -37,6 +45,7 @@ function CreateTransaction() {
 
     });
 
+
   };
 
 
@@ -44,42 +53,74 @@ function CreateTransaction() {
 
 
 
-  const handleSubmit = async (e) => {
+
+  const handleSubmit = async(e)=>{
+
 
     e.preventDefault();
 
 
-    try {
 
-      setLoading(true);
+    if(!selectedBusiness){
 
+      toast.error(
+        "Please select a business first"
+      );
+
+      return;
+
+    }
+
+
+
+
+
+    try{
 
 
       await API.post(
 
         "/transactions",
 
-        formData
+        {
+
+          ...formData,
+
+          businessId: selectedBusiness._id
+
+        }
 
       );
+
 
 
 
       toast.success(
+
         "Transaction added successfully"
+
       );
 
 
 
-      setTimeout(() => {
+      setTimeout(()=>{
 
         navigate("/dashboard");
 
-      }, 1000);
+      },1000);
 
 
 
-    } catch (error) {
+
+
+    }catch(error){
+
+
+
+      console.log(
+        error.response?.data
+      );
+
 
 
       toast.error(
@@ -89,12 +130,6 @@ function CreateTransaction() {
         "Failed to add transaction"
 
       );
-
-
-    } finally {
-
-
-      setLoading(false);
 
 
     }
@@ -108,189 +143,203 @@ function CreateTransaction() {
 
 
 
-  return (
-
-    <div>
+  return(
 
 
-      <h1>
-        Add Transaction
-      </h1>
+    <div className="max-w-xl mx-auto mt-10">
 
+
+      <div className="bg-white shadow rounded-xl p-8">
 
 
 
+        <h1 className="text-3xl font-bold mb-6">
 
-      <form onSubmit={handleSubmit}>
+          Add Transaction
+
+        </h1>
 
 
-        <select
 
-          name="type"
 
-          value={formData.type}
+        <p className="mb-4 text-gray-500">
 
-          onChange={handleChange}
+          Business:
 
-          disabled={loading}
+          {" "}
+
+          {selectedBusiness?.businessName || "None"}
+
+        </p>
+
+
+
+
+
+        <form
+
+          onSubmit={handleSubmit}
+
+          className="space-y-4"
 
         >
 
-          <option value="income">
-            Income
-          </option>
 
 
-          <option value="expense">
-            Expense
-          </option>
 
+          <select
 
-        </select>
+            name="type"
 
+            value={formData.type}
 
+            onChange={handleChange}
 
+            className="w-full border p-3 rounded"
 
+          >
 
-        <br /><br />
+            <option value="income">
 
+              Income
 
+            </option>
 
 
+            <option value="expense">
 
-        <input
+              Expense
 
-          type="text"
+            </option>
 
-          name="title"
 
-          placeholder="Title"
+          </select>
 
-          value={formData.title}
 
-          onChange={handleChange}
 
-          disabled={loading}
 
-        />
 
 
 
+          <input
 
+            type="text"
 
-        <br /><br />
+            name="title"
 
+            placeholder="Title"
 
+            value={formData.title}
 
+            onChange={handleChange}
 
+            className="w-full border p-3 rounded"
 
-        <input
+            required
 
-          type="number"
+          />
 
-          name="amount"
 
-          placeholder="Amount"
 
-          value={formData.amount}
 
-          onChange={handleChange}
 
-          disabled={loading}
 
-        />
 
+          <input
 
+            type="number"
 
+            name="amount"
 
+            placeholder="Amount"
 
-        <br /><br />
+            value={formData.amount}
 
+            onChange={handleChange}
 
+            className="w-full border p-3 rounded"
 
+            required
 
+          />
 
-        <input
 
-          type="text"
 
-          name="category"
 
-          placeholder="Category"
 
-          value={formData.category}
 
-          onChange={handleChange}
 
-          disabled={loading}
+          <input
 
-        />
+            type="text"
 
+            name="category"
 
+            placeholder="Category"
 
+            value={formData.category}
 
+            onChange={handleChange}
 
-        <br /><br />
+            className="w-full border p-3 rounded"
 
+            required
 
+          />
 
 
 
-        <textarea
 
-          name="description"
 
-          placeholder="Description"
 
-          value={formData.description}
 
-          onChange={handleChange}
+          <textarea
 
-          disabled={loading}
+            name="description"
 
-        />
+            placeholder="Description"
 
+            value={formData.description}
 
+            onChange={handleChange}
 
+            className="w-full border p-3 rounded"
 
+          />
 
-        <br /><br />
 
 
 
 
 
-        <button
 
-          type="submit"
+          <button
 
-          disabled={loading}
+            type="submit"
 
-        >
+            className="w-full bg-green-600 text-white py-3 rounded-lg"
 
-          {
+          >
 
-            loading ?
+            Save Transaction
 
-            "Saving..." :
+          </button>
 
-            "Save Transaction"
 
-          }
 
 
-        </button>
+        </form>
 
 
 
-
-
-      </form>
+      </div>
 
 
     </div>
 
+
   );
+
 
 }
 

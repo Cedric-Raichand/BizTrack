@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { useBusiness } from "../context/BusinessContext";
+
 import API from "../api/axios";
 
 import Layout from "../components/Layout";
@@ -14,105 +16,58 @@ import ExportPDF from "../components/ExportPDF";
 import { toast } from "react-toastify";
 
 
+
 function Dashboard() {
 
 
   const { user } = useAuth();
 
 
-  const [business, setBusiness] = useState(null);
 
-  const [transactions, setTransactions] = useState([]);
+  const {
 
-  const [loading, setLoading] = useState(true);
+    businesses,
 
+    selectedBusiness,
 
+    selectBusiness
 
-  const [search, setSearch] = useState("");
-
-  const [typeFilter, setTypeFilter] = useState("");
-
-  const [periodFilter, setPeriodFilter] = useState("");
+  } = useBusiness();
 
 
 
 
 
+  const [transactions,setTransactions] = useState([]);
 
-  useEffect(() => {
+  const [search,setSearch] = useState("");
 
-    fetchDashboardData();
+  const [typeFilter,setTypeFilter] = useState("");
 
-  }, []);
-
-
-
+  const [periodFilter,setPeriodFilter] = useState("");
 
 
-  useEffect(() => {
 
-    if (!loading) {
+
+
+
+
+
+  useEffect(()=>{
+
+
+    if(selectedBusiness){
 
       fetchTransactions();
 
     }
 
-  }, [typeFilter, periodFilter]);
 
-
-
-
-
-
-
-  const fetchDashboardData = async () => {
-
-    try {
-
-
-      await fetchBusiness();
-
-      await fetchTransactions();
-
-
-
-    } finally {
-
-
-      setLoading(false);
-
-
-    }
-
-  };
-
-
-
-
-
-
-
-  const fetchBusiness = async () => {
-
-    try {
-
-
-      const res = await API.get("/business");
-
-
-      setBusiness(res.data);
-
-
-
-    } catch(error) {
-
-
-      console.log(error);
-
-
-    }
-
-  };
+  },[
+    selectedBusiness,
+    typeFilter,
+    periodFilter
+  ]);
 
 
 
@@ -122,18 +77,21 @@ function Dashboard() {
 
 
 
-  const fetchTransactions = async () => {
 
-    try {
+  const fetchTransactions = async()=>{
 
 
-      let url = "/transactions?";
+    try{
+
+
+      let url =
+      `/transactions?businessId=${selectedBusiness._id}`;
 
 
 
       if(typeFilter){
 
-        url += `type=${typeFilter}&`;
+        url += `&type=${typeFilter}`;
 
       }
 
@@ -141,15 +99,15 @@ function Dashboard() {
 
       if(periodFilter){
 
-        url += `period=${periodFilter}`;
+        url += `&period=${periodFilter}`;
 
       }
 
 
 
 
-
       const res = await API.get(url);
+
 
 
 
@@ -161,19 +119,22 @@ function Dashboard() {
 
 
 
-    } catch(error) {
+
+    }catch(error){
 
 
       console.log(error);
 
 
-
       toast.error(
+
         "Failed to load transactions"
+
       );
 
 
     }
+
 
   };
 
@@ -185,16 +146,20 @@ function Dashboard() {
 
 
 
-  const deleteTransaction = async (id) => {
+  const deleteTransaction = async(id)=>{
 
 
-    if(!window.confirm("Delete this transaction?"))
+    if(
+      !window.confirm(
+        "Delete this transaction?"
+      )
+    ) return;
 
-      return;
 
 
 
-    try {
+
+    try{
 
 
       await API.delete(
@@ -202,6 +167,7 @@ function Dashboard() {
         `/transactions/${id}`
 
       );
+
 
 
 
@@ -217,7 +183,9 @@ function Dashboard() {
 
 
 
-    } catch(error) {
+
+    }catch(error){
+
 
 
       toast.error(
@@ -231,6 +199,7 @@ function Dashboard() {
 
     }
 
+
   };
 
 
@@ -241,15 +210,19 @@ function Dashboard() {
 
 
 
-  const filteredTransactions = transactions.filter(
+  const filteredTransactions =
 
-    (transaction) =>
+  transactions.filter((transaction)=>
 
-      transaction.title
+    transaction.title
 
-      .toLowerCase()
+    .toLowerCase()
 
-      .includes(search.toLowerCase())
+    .includes(
+
+      search.toLowerCase()
+
+    )
 
   );
 
@@ -259,44 +232,25 @@ function Dashboard() {
 
 
 
-  const totalIncome = filteredTransactions
-
-    .filter((t)=>t.type==="income")
-
-    .reduce(
-
-      (sum,t)=>sum + Number(t.amount),
-
-      0
-
-    );
 
 
+  const totalIncome =
 
+  filteredTransactions
 
+  .filter(
+    (t)=>t.type==="income"
+  )
 
+  .reduce(
 
-  const totalExpenses = filteredTransactions
+    (sum,t)=>
 
-    .filter((t)=>t.type==="expense")
+    sum + Number(t.amount),
 
-    .reduce(
+    0
 
-      (sum,t)=>sum + Number(t.amount),
-
-      0
-
-    );
-
-
-
-
-
-
-  const balance = totalIncome - totalExpenses;
-
-
-  const totalTransactions = filteredTransactions.length;
+  );
 
 
 
@@ -305,30 +259,39 @@ function Dashboard() {
 
 
 
-  if(loading){
+  const totalExpenses =
+
+  filteredTransactions
+
+  .filter(
+    (t)=>t.type==="expense"
+  )
+
+  .reduce(
+
+    (sum,t)=>
+
+    sum + Number(t.amount),
+
+    0
+
+  );
 
 
-    return (
-
-      <Layout>
-
-        <div className="flex justify-center items-center h-64">
-
-          <h2 className="text-xl font-semibold">
-
-            Loading dashboard...
-
-          </h2>
-
-        </div>
 
 
-      </Layout>
-
-    );
 
 
-  }
+
+  const balance =
+  totalIncome-totalExpenses;
+
+
+
+
+
+  const totalTransactions =
+  filteredTransactions.length;
 
 
 
@@ -353,11 +316,13 @@ function Dashboard() {
 
         <div>
 
+
           <h1 className="text-3xl font-bold">
 
             Welcome, {user?.name}
 
           </h1>
+
 
 
           <p className="text-gray-500">
@@ -382,7 +347,7 @@ function Dashboard() {
 
           <h2 className="text-2xl font-bold mb-4">
 
-            Business Information
+            Select Business
 
           </h2>
 
@@ -390,89 +355,76 @@ function Dashboard() {
 
 
 
-          {
-
-          business ? (
+          <select
 
 
-            <div className="space-y-2">
+            value={
+              selectedBusiness?._id || ""
+            }
 
 
-              <p>
-
-                <strong>Name:</strong> {business.businessName}
-
-              </p>
+            onChange={(e)=>{
 
 
-              <p>
+              const business =
 
-                <strong>Category:</strong> {business.category}
+              businesses.find(
 
-              </p>
+                (b)=>
 
+                b._id === e.target.value
 
-              <p>
-
-                <strong>Description:</strong> {business.description}
-
-              </p>
-
-
-              <p>
-
-                <strong>Location:</strong> {business.location}
-
-              </p>
-
-
-            </div>
+              );
 
 
 
-          ) : (
+              selectBusiness(business);
+
+
+            }}
+
+
+            className="border rounded-lg p-3 w-full"
+
+          >
 
 
 
-            <div className="text-center py-6">
+            <option value="">
 
+              Select Business
 
-              <h3 className="text-xl font-semibold mb-2">
-
-                No business profile yet
-
-              </h3>
-
-
-
-              <p className="text-gray-500 mb-4">
-
-                Create your business profile to start tracking your finances.
-
-              </p>
+            </option>
 
 
 
 
-              <Link to="/create-business">
+            {
+
+            businesses.map((business)=>(
 
 
-                <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
+              <option
 
-                  Create Business
+              key={business._id}
 
-                </button>
+              value={business._id}
 
+              >
 
-              </Link>
-
-
-            </div>
+                {business.businessName}
 
 
-          )
+              </option>
 
-          }
+
+            ))
+
+            }
+
+
+          </select>
+
 
 
         </div>
@@ -485,64 +437,159 @@ function Dashboard() {
 
 
 
-        <div>
+        {
+
+        selectedBusiness && (
 
 
-          <h2 className="text-2xl font-bold mb-5">
+        <div className="bg-white shadow rounded-xl p-6">
 
-            Financial Summary
+
+          <h2 className="text-2xl font-bold mb-4">
+
+            Business Information
 
           </h2>
 
 
 
 
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-
-            <SummaryCard
-
-              title="Total Income"
-
-              amount={totalIncome}
-
-            />
+          <div className="space-y-2">
 
 
+            <p>
 
-            <SummaryCard
+            <strong>Name:</strong>
 
-              title="Total Expenses"
+            {" "}
 
-              amount={totalExpenses}
+            {selectedBusiness.businessName}
 
-            />
+            </p>
 
 
 
-            <SummaryCard
 
-              title="Balance"
+            <p>
 
-              amount={balance}
+            <strong>Category:</strong>
 
-            />
+            {" "}
+
+            {selectedBusiness.category}
+
+            </p>
 
 
 
-            <SummaryCard
 
-              title="Transactions"
+            <p>
 
-              amount={totalTransactions}
+            <strong>Description:</strong>
 
-              prefix=""
+            {" "}
 
-            />
+            {selectedBusiness.description}
+
+            </p>
+
+
+
+
+            <p>
+
+            <strong>Location:</strong>
+
+            {" "}
+
+            {selectedBusiness.location}
+
+            </p>
+
 
 
           </div>
+
+
+        </div>
+
+
+        )
+
+        }
+
+
+
+
+
+
+
+
+
+        <div>
+
+
+        <h2 className="text-2xl font-bold mb-5">
+
+          Financial Summary
+
+        </h2>
+
+
+
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+
+
+        <SummaryCard
+
+        title="Total Income"
+
+        amount={totalIncome}
+
+        />
+
+
+
+
+        <SummaryCard
+
+        title="Total Expenses"
+
+        amount={totalExpenses}
+
+        />
+
+
+
+
+        <SummaryCard
+
+        title="Balance"
+
+        amount={balance}
+
+        />
+
+
+
+
+        <SummaryCard
+
+        title="Transactions"
+
+        amount={totalTransactions}
+
+        prefix=""
+
+        />
+
+
+
+        </div>
+
 
 
         </div>
@@ -557,9 +604,9 @@ function Dashboard() {
 
         <FinanceChart
 
-          income={totalIncome}
+        income={totalIncome}
 
-          expense={totalExpenses}
+        expense={totalExpenses}
 
         />
 
@@ -575,59 +622,63 @@ function Dashboard() {
 
 
 
-          <Link to="/create-business">
+        <Link to="/create-business">
 
 
-            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
+        <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
 
 
-              Create Business
+        Create Business
 
 
-            </button>
+        </button>
 
 
-          </Link>
-
-
-
-
-
-          <Link to="/create-transaction">
-
-
-            <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
-
-
-              Add Transaction
-
-
-            </button>
-
-
-          </Link>
+        </Link>
 
 
 
 
 
-          <ExportButtons
 
-            transactions={filteredTransactions}
-
-          />
+        <Link to="/create-transaction">
 
 
+        <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
+
+
+        Add Transaction
+
+
+        </button>
+
+
+        </Link>
 
 
 
-          <ExportPDF
 
-            transactions={filteredTransactions}
 
-            business={business}
 
-          />
+        <ExportButtons
+
+        transactions={filteredTransactions}
+
+        />
+
+
+
+
+
+
+        <ExportPDF
+
+        transactions={filteredTransactions}
+
+        business={selectedBusiness}
+
+        />
+
 
 
 
@@ -645,103 +696,122 @@ function Dashboard() {
 
 
 
-          <input
+        <input
 
-            type="text"
+        type="text"
 
-            placeholder="Search..."
+        placeholder="Search..."
 
-            value={search}
+        value={search}
 
-            onChange={(e)=>setSearch(e.target.value)}
+        onChange={(e)=>
 
-            className="border rounded-lg p-3"
+        setSearch(e.target.value)
 
-          />
+        }
 
+        className="border rounded-lg p-3"
 
-
-
-
-          <select
-
-            value={typeFilter}
-
-            onChange={(e)=>setTypeFilter(e.target.value)}
-
-            className="border rounded-lg p-3"
-
-          >
-
-
-            <option value="">
-
-              All Types
-
-            </option>
-
-
-            <option value="income">
-
-              Income
-
-            </option>
-
-
-            <option value="expense">
-
-              Expense
-
-            </option>
-
-
-          </select>
+        />
 
 
 
 
 
 
-          <select
 
-            value={periodFilter}
+        <select
 
-            onChange={(e)=>setPeriodFilter(e.target.value)}
+        value={typeFilter}
 
-            className="border rounded-lg p-3"
+        onChange={(e)=>
 
-          >
+        setTypeFilter(e.target.value)
 
+        }
 
-            <option value="">
+        className="border rounded-lg p-3"
 
-              All Time
-
-            </option>
+        >
 
 
-            <option value="today">
+        <option value="">
 
-              Today
+        All Types
 
-            </option>
-
-
-            <option value="month">
-
-              This Month
-
-            </option>
+        </option>
 
 
-            <option value="year">
+        <option value="income">
 
-              This Year
+        Income
 
-            </option>
+        </option>
 
 
-          </select>
+        <option value="expense">
+
+        Expense
+
+        </option>
+
+
+        </select>
+
+
+
+
+
+
+
+
+
+        <select
+
+        value={periodFilter}
+
+        onChange={(e)=>
+
+        setPeriodFilter(e.target.value)
+
+        }
+
+        className="border rounded-lg p-3"
+
+        >
+
+
+        <option value="">
+
+        All Time
+
+        </option>
+
+
+        <option value="today">
+
+        Today
+
+        </option>
+
+
+        <option value="month">
+
+        This Month
+
+        </option>
+
+
+        <option value="year">
+
+        This Year
+
+        </option>
+
+
+        </select>
+
+
 
 
         </div>
@@ -754,70 +824,17 @@ function Dashboard() {
 
 
 
-        {
+        <TransactionTable
 
-        filteredTransactions.length === 0 ? (
+        transactions={filteredTransactions}
 
+        onDelete={deleteTransaction}
 
-
-          <div className="bg-white shadow rounded-xl p-8 text-center">
-
-
-            <h3 className="text-xl font-semibold mb-2">
-
-              No transactions yet
-
-            </h3>
-
-
-
-            <p className="text-gray-500 mb-4">
-
-              Start adding income and expenses to track your business performance.
-
-            </p>
+        />
 
 
 
 
-
-            <Link to="/create-transaction">
-
-
-              <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
-
-
-                Add Transaction
-
-
-              </button>
-
-
-            </Link>
-
-
-
-          </div>
-
-
-
-        ) : (
-
-
-
-          <TransactionTable
-
-            transactions={filteredTransactions}
-
-            onDelete={deleteTransaction}
-
-          />
-
-
-        )
-
-
-        }
 
 
 
@@ -828,6 +845,7 @@ function Dashboard() {
 
 
   );
+
 
 }
 
