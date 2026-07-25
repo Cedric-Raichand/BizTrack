@@ -66,7 +66,6 @@ function TransactionTable({
 
               </tr>
 
-
             </thead>
 
 
@@ -122,7 +121,6 @@ function TransactionTable({
 
                       {transaction.type}
 
-
                     </span>
 
 
@@ -132,21 +130,14 @@ function TransactionTable({
 
 
 
-
-
                   <td className="p-3 font-semibold">
-
 
                     ₵
 
                     {Number(transaction.amount)
-
                     .toLocaleString("en-US")}
 
-
                   </td>
-
-
 
 
 
@@ -164,13 +155,38 @@ function TransactionTable({
 
 
 
-
-
                   <td className="p-3 space-x-2">
 
 
 
+                    {/* View Button */}
 
+                    <Link
+
+                      to={`/transaction/${transaction._id}`}
+
+                    >
+
+                      <button
+
+                        className="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800"
+
+                      >
+
+                        View
+
+                      </button>
+
+
+                    </Link>
+
+
+
+
+
+
+
+                    {/* Edit Button */}
 
                     <Link
 
@@ -200,6 +216,8 @@ function TransactionTable({
 
 
 
+
+                    {/* Delete Button */}
 
                     <button
 

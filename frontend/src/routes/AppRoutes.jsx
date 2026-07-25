@@ -1,16 +1,22 @@
 import { Routes, Route } from "react-router-dom";
 
+
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
+
 import CreateBusiness from "../pages/CreateBusiness";
 import CreateTransaction from "../pages/CreateTransaction";
 import EditTransaction from "../pages/EditTransaction";
+import TransactionDetails from "../pages/TransactionDetails";
+
 
 import ProtectedRoute from "./ProtectedRoute";
 
 
+
 const AppRoutes = () => {
+
 
   return (
 
@@ -18,69 +24,158 @@ const AppRoutes = () => {
 
 
       {/* Default page */}
-      <Route 
-        path="/" 
-        element={<Login />} 
+
+      <Route
+
+        path="/"
+
+        element={<Login />}
+
       />
+
+
+
 
 
       {/* Public routes */}
-      <Route 
-        path="/login" 
-        element={<Login />} 
+
+
+      <Route
+
+        path="/login"
+
+        element={<Login />}
+
       />
 
 
-      <Route 
-        path="/register" 
-        element={<Register />} 
+
+      <Route
+
+        path="/register"
+
+        element={<Register />}
+
       />
+
+
+
+
+
 
 
 
       {/* Protected routes */}
 
+
+
       <Route
+
         path="/dashboard"
+
         element={
+
           <ProtectedRoute>
+
             <Dashboard />
+
           </ProtectedRoute>
+
         }
+
       />
 
 
 
+
+
+
+
       <Route
+
         path="/create-business"
+
         element={
+
           <ProtectedRoute>
+
             <CreateBusiness />
+
           </ProtectedRoute>
+
         }
+
       />
 
 
 
+
+
+
+
       <Route
+
         path="/create-transaction"
+
         element={
+
           <ProtectedRoute>
+
             <CreateTransaction />
+
           </ProtectedRoute>
+
         }
+
       />
+
+
+
+
+
 
 
 
       <Route
+
         path="/edit-transaction/:id"
+
         element={
+
           <ProtectedRoute>
+
             <EditTransaction />
+
           </ProtectedRoute>
+
         }
+
       />
+
+
+
+
+
+
+
+      {/* Transaction details page */}
+
+      <Route
+
+        path="/transaction/:id"
+
+        element={
+
+          <ProtectedRoute>
+
+            <TransactionDetails />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
 
 
     </Routes>
@@ -88,6 +183,7 @@ const AppRoutes = () => {
   );
 
 };
+
 
 
 export default AppRoutes;
