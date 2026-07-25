@@ -1,4 +1,11 @@
-function TransactionTable({ transactions }) {
+import { Link } from "react-router-dom";
+
+
+function TransactionTable({
+  transactions,
+  onDelete
+}) {
+
 
   return (
 
@@ -23,7 +30,8 @@ function TransactionTable({ transactions }) {
 
         <div className="overflow-x-auto">
 
-          <table className="w-full border-collapse">
+
+          <table className="w-full">
 
 
             <thead>
@@ -31,23 +39,28 @@ function TransactionTable({ transactions }) {
               <tr className="border-b">
 
 
-                <th className="text-left p-3">
+                <th className="p-3 text-left">
                   Title
                 </th>
 
 
-                <th className="text-left p-3">
+                <th className="p-3 text-left">
                   Type
                 </th>
 
 
-                <th className="text-left p-3">
+                <th className="p-3 text-left">
                   Amount
                 </th>
 
 
-                <th className="text-left p-3">
+                <th className="p-3 text-left">
                   Category
+                </th>
+
+
+                <th className="p-3 text-left">
+                  Actions
                 </th>
 
 
@@ -60,7 +73,8 @@ function TransactionTable({ transactions }) {
             <tbody>
 
 
-              {transactions.map((transaction) => (
+              {transactions.map((transaction)=>(
+
 
                 <tr
                   key={transaction._id}
@@ -88,7 +102,43 @@ function TransactionTable({ transactions }) {
                   </td>
 
 
+                  <td className="p-3 space-x-2">
+
+
+                    <Link
+                      to={`/edit-transaction/${transaction._id}`}
+                    >
+
+                      <button className="bg-blue-600 text-white px-3 py-1 rounded">
+
+                        Edit
+
+                      </button>
+
+                    </Link>
+
+
+
+                    <button
+
+                      onClick={() =>
+                        onDelete(transaction._id)
+                      }
+
+                      className="bg-red-600 text-white px-3 py-1 rounded"
+
+                    >
+
+                      Delete
+
+                    </button>
+
+
+                  </td>
+
+
                 </tr>
+
 
               ))}
 

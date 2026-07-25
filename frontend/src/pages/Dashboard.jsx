@@ -23,10 +23,10 @@ function Dashboard() {
   useEffect(() => {
 
     fetchBusiness();
-
     fetchTransactions();
 
   }, []);
+
 
 
 
@@ -49,6 +49,8 @@ function Dashboard() {
 
 
 
+
+
   const fetchTransactions = async () => {
 
     try {
@@ -68,10 +70,62 @@ function Dashboard() {
 
 
 
+
+
+  // DELETE TRANSACTION
+
+  const deleteTransaction = async (id) => {
+
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this transaction?"
+    );
+
+
+    if (!confirmDelete) return;
+
+
+
+    try {
+
+
+      await API.delete(
+        `/transactions/${id}`
+      );
+
+
+      alert("Transaction deleted successfully");
+
+
+      fetchTransactions();
+
+
+
+    } catch(error) {
+
+
+      console.log(error);
+
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to delete transaction"
+      );
+
+
+    }
+
+  };
+
+
+
+
+
   const totalIncome = transactions
 
     .filter(
-      (transaction) => transaction.type === "income"
+      (transaction) =>
+        transaction.type === "income"
     )
 
     .reduce(
@@ -79,13 +133,16 @@ function Dashboard() {
         total + Number(transaction.amount),
       0
     );
+
+
 
 
 
   const totalExpenses = transactions
 
     .filter(
-      (transaction) => transaction.type === "expense"
+      (transaction) =>
+        transaction.type === "expense"
     )
 
     .reduce(
@@ -93,6 +150,8 @@ function Dashboard() {
         total + Number(transaction.amount),
       0
     );
+
+
 
 
 
@@ -100,14 +159,16 @@ function Dashboard() {
 
 
 
+
+
   return (
 
     <Layout>
 
+
       <div className="space-y-8">
 
 
-        {/* Welcome Section */}
 
         <div>
 
@@ -125,7 +186,6 @@ function Dashboard() {
 
 
 
-        {/* Business Information */}
 
         <div className="bg-white shadow rounded-xl p-6">
 
@@ -183,8 +243,6 @@ function Dashboard() {
 
 
 
-        {/* Summary Cards */}
-
         <div>
 
 
@@ -224,18 +282,13 @@ function Dashboard() {
 
 
 
-
-        {/* Actions */}
-
         <div className="flex gap-4">
 
 
           <Link to="/create-business">
 
-            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700">
-
+            <button className="bg-blue-600 text-white px-5 py-3 rounded-lg">
               Create Business
-
             </button>
 
           </Link>
@@ -244,10 +297,8 @@ function Dashboard() {
 
           <Link to="/create-transaction">
 
-            <button className="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700">
-
+            <button className="bg-green-600 text-white px-5 py-3 rounded-lg">
               Add Transaction
-
             </button>
 
           </Link>
@@ -259,13 +310,14 @@ function Dashboard() {
 
 
 
+        <TransactionTable
 
+          transactions={transactions}
 
-        {/* Transactions */}
+          onDelete={deleteTransaction}
 
-      <TransactionTable
-        transactions={transactions}
-      />
+        />
+
 
 
       </div>
