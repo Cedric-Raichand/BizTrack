@@ -11,6 +11,10 @@ function CreateBusiness() {
   const navigate = useNavigate();
 
 
+  const [loading, setLoading] = useState(false);
+
+
+
   const [formData, setFormData] = useState({
 
     businessName: "",
@@ -19,6 +23,7 @@ function CreateBusiness() {
     location: ""
 
   });
+
 
 
 
@@ -39,12 +44,18 @@ function CreateBusiness() {
 
 
 
+
+
   const handleSubmit = async(e)=>{
 
     e.preventDefault();
 
 
     try{
+
+
+      setLoading(true);
+
 
 
       await API.post(
@@ -58,8 +69,11 @@ function CreateBusiness() {
 
 
       toast.success(
+
         "Business created successfully"
+
       );
+
 
 
 
@@ -71,7 +85,9 @@ function CreateBusiness() {
 
 
 
+
     }catch(error){
+
 
 
       console.log(error);
@@ -87,7 +103,15 @@ function CreateBusiness() {
       );
 
 
+
+    } finally {
+
+
+      setLoading(false);
+
+
     }
+
 
   };
 
@@ -95,7 +119,10 @@ function CreateBusiness() {
 
 
 
+
+
   return (
+
 
     <Layout>
 
@@ -103,7 +130,9 @@ function CreateBusiness() {
       <div className="max-w-xl mx-auto">
 
 
+
         <div className="bg-white shadow rounded-xl p-8">
+
 
 
           <h1 className="text-3xl font-bold mb-6">
@@ -111,6 +140,8 @@ function CreateBusiness() {
             Create Business
 
           </h1>
+
+
 
 
 
@@ -126,6 +157,8 @@ function CreateBusiness() {
 
 
 
+
+
             <input
 
               type="text"
@@ -138,11 +171,15 @@ function CreateBusiness() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg p-3"
 
               required
 
             />
+
+
 
 
 
@@ -160,11 +197,16 @@ function CreateBusiness() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg p-3"
 
               required
 
             />
+
+
+
 
 
 
@@ -180,11 +222,15 @@ function CreateBusiness() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg p-3"
 
               rows="4"
 
             />
+
+
 
 
 
@@ -202,6 +248,8 @@ function CreateBusiness() {
 
               onChange={handleChange}
 
+              disabled={loading}
+
               className="w-full border rounded-lg p-3"
 
               required
@@ -212,17 +260,34 @@ function CreateBusiness() {
 
 
 
+
+
             <button
 
               type="submit"
 
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+              disabled={loading}
+
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
 
             >
 
-              Create Business
+
+              {
+
+                loading ?
+
+                "Creating Business..." :
+
+                "Create Business"
+
+              }
+
+
 
             </button>
+
+
 
 
 
@@ -230,13 +295,18 @@ function CreateBusiness() {
           </form>
 
 
+
+
         </div>
+
 
 
       </div>
 
 
+
     </Layout>
+
 
   );
 
