@@ -3,7 +3,14 @@ import { Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+
 import Dashboard from "../pages/Dashboard";
+
+import Businesses from "../pages/Businesses";
+import Transactions from "../pages/Transactions";
+import Reports from "../pages/Reports";
+import Settings from "../pages/Settings";
+
 
 import CreateBusiness from "../pages/CreateBusiness";
 import CreateTransaction from "../pages/CreateTransaction";
@@ -23,7 +30,9 @@ const AppRoutes = () => {
     <Routes>
 
 
-      {/* Default page */}
+
+      {/* Public routes */}
+
 
       <Route
 
@@ -34,12 +43,6 @@ const AppRoutes = () => {
       />
 
 
-
-
-
-      {/* Public routes */}
-
-
       <Route
 
         path="/login"
@@ -47,7 +50,6 @@ const AppRoutes = () => {
         element={<Login />}
 
       />
-
 
 
       <Route
@@ -63,10 +65,7 @@ const AppRoutes = () => {
 
 
 
-
-
-      {/* Protected routes */}
-
+      {/* Protected Dashboard */}
 
 
       <Route
@@ -91,6 +90,112 @@ const AppRoutes = () => {
 
 
 
+
+      {/* Businesses */}
+
+
+      <Route
+
+        path="/businesses"
+
+        element={
+
+          <ProtectedRoute>
+
+            <Businesses />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+
+
+
+
+
+
+      {/* Transactions */}
+
+
+      <Route
+
+        path="/transactions"
+
+        element={
+
+          <ProtectedRoute>
+
+            <Transactions />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+
+
+
+
+
+
+      {/* Reports */}
+
+
+      <Route
+
+        path="/reports"
+
+        element={
+
+          <ProtectedRoute>
+
+            <Reports />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+
+
+
+
+
+
+      {/* Settings */}
+
+
+      <Route
+
+        path="/settings"
+
+        element={
+
+          <ProtectedRoute>
+
+            <Settings />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+
+
+
+
+
+
+
+
+      {/* Create Business */}
+
+
       <Route
 
         path="/create-business"
@@ -111,6 +216,9 @@ const AppRoutes = () => {
 
 
 
+
+
+      {/* Create Transaction */}
 
 
       <Route
@@ -136,6 +244,9 @@ const AppRoutes = () => {
 
 
 
+      {/* Edit Transaction */}
+
+
       <Route
 
         path="/edit-transaction/:id"
@@ -158,7 +269,9 @@ const AppRoutes = () => {
 
 
 
-      {/* Transaction details page */}
+
+      {/* Transaction Details */}
+
 
       <Route
 
