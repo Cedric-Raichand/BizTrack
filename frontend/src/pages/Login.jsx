@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -42,6 +42,8 @@ function Login() {
     });
 
   };
+
+
 
 
 
@@ -114,7 +116,6 @@ function Login() {
 
 
 
-
       toast.error(
 
         error.response?.data?.message ||
@@ -142,95 +143,210 @@ function Login() {
 
 
 
+
+
   return (
 
 
-    <div>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
 
-      <h1>
-
-        Login
-
-      </h1>
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
 
 
+        <div className="text-center mb-8">
 
 
+          <h1 className="text-4xl font-bold text-blue-600">
 
-      <form onSubmit={handleSubmit}>
+            BizTrack
 
-
-        <input
-
-          type="email"
-
-          name="email"
-
-          placeholder="Email"
-
-          value={formData.email}
-
-          onChange={handleChange}
-
-          disabled={loading}
-
-        />
+          </h1>
 
 
+          <p className="text-gray-500 mt-2">
+
+            Manage your business finances easily
+
+          </p>
 
 
-
-        <input
-
-          type="password"
-
-          name="password"
-
-          placeholder="Password"
-
-          value={formData.password}
-
-          onChange={handleChange}
-
-          disabled={loading}
-
-        />
+        </div>
 
 
 
 
 
 
-        <button
 
-          type="submit"
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
 
-          disabled={loading}
+          Welcome Back
+
+        </h2>
+
+
+
+
+
+
+
+        <form
+
+          onSubmit={handleSubmit}
+
+          className="space-y-5"
 
         >
 
-          {
-
-            loading ?
-
-            "Logging in..." :
-
-            "Login"
-
-          }
-
-
-        </button>
 
 
 
 
-
-      </form>
-
+          <div>
 
 
+            <label className="block mb-2 text-gray-700 font-medium">
+
+              Email
+
+            </label>
+
+
+            <input
+
+              type="email"
+
+              name="email"
+
+              placeholder="Enter your email"
+
+              value={formData.email}
+
+              onChange={handleChange}
+
+              disabled={loading}
+
+              className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+
+              required
+
+            />
+
+
+          </div>
+
+
+
+
+
+
+
+          <div>
+
+
+            <label className="block mb-2 text-gray-700 font-medium">
+
+              Password
+
+            </label>
+
+
+            <input
+
+              type="password"
+
+              name="password"
+
+              placeholder="Enter your password"
+
+              value={formData.password}
+
+              onChange={handleChange}
+
+              disabled={loading}
+
+              className="w-full border rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500"
+
+              required
+
+            />
+
+
+          </div>
+
+
+
+
+
+
+
+          <button
+
+            type="submit"
+
+            disabled={loading}
+
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+
+          >
+
+
+            {
+
+              loading ?
+
+              "Logging in..." :
+
+              "Login"
+
+            }
+
+
+          </button>
+
+
+
+
+
+
+        </form>
+
+
+
+
+
+
+
+        <p className="text-center mt-6 text-gray-600">
+
+
+          Don't have an account?
+
+
+          {" "}
+
+
+          <Link
+
+            to="/register"
+
+            className="text-blue-600 font-semibold hover:underline"
+
+          >
+
+            Register
+
+          </Link>
+
+
+        </p>
+
+
+
+
+
+      </div>
 
 
     </div>
