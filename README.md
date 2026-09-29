@@ -94,5 +94,3 @@ VITE_API_URL=http://localhost:5000/api
 * Email notifications
 * Business analytics
 * Dark mode
-
-
