@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Lets you write dark:bg-... classes if you want them later */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 
 html {
   -webkit-text-size-adjust: 100%;
