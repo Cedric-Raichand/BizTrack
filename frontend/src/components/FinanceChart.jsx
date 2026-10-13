@@ -7,6 +7,8 @@ import {
 
 import { Pie } from "react-chartjs-2";
 
+import useTheme from "../hooks/useTheme";
+
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -20,6 +22,18 @@ function FinanceChart({
   expense
 
 }) {
+
+  const { theme } = useTheme();
+
+  const textColor = theme === "dark" ? "#e5e7eb" : "#374151";
+
+  const options = {
+    plugins: {
+      legend: {
+        labels: { color: textColor },
+      },
+    },
+  };
 
   const data = {
 
@@ -69,7 +83,7 @@ function FinanceChart({
 
       <div className="max-w-sm mx-auto">
 
-        <Pie data={data} />
+        <Pie data={data} options={options} />
 
       </div>
 
