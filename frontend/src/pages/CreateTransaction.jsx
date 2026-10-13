@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Layout from "../components/Layout";
 import API from "../api/axios";
 import { toast } from "react-toastify";
 import { useBusiness } from "../context/BusinessContext";
@@ -146,14 +147,16 @@ function CreateTransaction() {
   return(
 
 
-    <div className="max-w-xl mx-auto mt-10">
+    <Layout>
+
+    <div className="max-w-xl mx-auto">
 
 
-      <div className="bg-white shadow rounded-xl p-8">
+      <div className="bg-white shadow rounded-xl p-5 sm:p-8">
 
 
 
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6">
 
           Add Transaction
 
@@ -337,6 +340,7 @@ function CreateTransaction() {
 
     </div>
 
+    </Layout>
 
   );
 
