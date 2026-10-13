@@ -9,7 +9,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { BusinessProvider } from "./context/BusinessContext.jsx";
 
-import { ToastContainer } from "react-toastify";
+import ThemedToastContainer from "./components/ThemedToastContainer.jsx";
 import "react-toastify/dist/ReactToastify.css";
 
 
@@ -30,13 +30,7 @@ ReactDOM.createRoot(
         <App />
 
 
-        <ToastContainer
-
-          position="top-right"
-
-          autoClose={3000}
-
-        />
+        <ThemedToastContainer />
 
 
       </BusinessProvider>
