@@ -6,11 +6,12 @@ import {
   MdAssessment,
   MdSettings,
   MdLogout,
+  MdClose,
 } from "react-icons/md";
 
 import { useAuth } from "../context/AuthContext";
 
-function Sidebar() {
+function Sidebar({ open = false, onClose = () => {} }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -27,17 +28,44 @@ function Sidebar() {
     }`;
 
   return (
-    <aside className="w-64 min-h-screen bg-slate-900 flex flex-col">
+    <>
+      {/* Dark backdrop behind the menu on phones/tablets */}
+      <div
+        onClick={onClose}
+        aria-hidden="true"
+        className={`fixed inset-0 z-30 bg-black/50 transition-opacity lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
 
-      <div className="border-b border-slate-700 px-6 py-6">
+    <aside
+      className={`sidebar fixed inset-y-0 left-0 z-40 flex w-64 max-w-[85vw] flex-col overflow-y-auto bg-slate-900 transition-transform duration-200 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:max-w-none lg:shrink-0 lg:translate-x-0 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
 
-        <h1 className="text-3xl font-bold text-white">
-          BizTrack
-        </h1>
+      <div className="flex items-start justify-between border-b border-slate-700 px-6 py-6">
 
-        <p className="text-sm text-gray-400 mt-1">
-          Business Finance Manager
-        </p>
+        <div>
+
+          <h1 className="text-3xl font-bold text-white">
+            BizTrack
+          </h1>
+
+          <p className="text-sm text-gray-400 mt-1">
+            Business Finance Manager
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close menu"
+          className="rounded-lg p-1 text-gray-400 hover:bg-slate-800 hover:text-white lg:hidden"
+        >
+          <MdClose size={26} />
+        </button>
 
       </div>
 
@@ -46,6 +74,7 @@ function Sidebar() {
         <NavLink
           to="/dashboard"
           className={linkClass}
+          onClick={onClose}
         >
           <MdDashboard size={22} />
           Dashboard
@@ -54,6 +83,7 @@ function Sidebar() {
         <NavLink
           to="/businesses"
           className={linkClass}
+          onClick={onClose}
         >
           <MdBusiness size={22} />
           Businesses
@@ -62,6 +92,7 @@ function Sidebar() {
         <NavLink
           to="/transactions"
           className={linkClass}
+          onClick={onClose}
         >
           <MdAttachMoney size={22} />
           Transactions
@@ -70,6 +101,7 @@ function Sidebar() {
         <NavLink
           to="/reports"
           className={linkClass}
+          onClick={onClose}
         >
           <MdAssessment size={22} />
           Reports
@@ -78,6 +110,7 @@ function Sidebar() {
         <NavLink
           to="/settings"
           className={linkClass}
+          onClick={onClose}
         >
           <MdSettings size={22} />
           Settings
@@ -98,6 +131,7 @@ function Sidebar() {
       </div>
 
     </aside>
+    </>
   );
 }
 
