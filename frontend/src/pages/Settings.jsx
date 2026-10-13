@@ -7,7 +7,7 @@ return (
 
 <Layout>
 
-<div className="bg-white rounded-xl shadow p-8">
+<div className="bg-white rounded-xl shadow p-5 sm:p-8">
 
 <h1 className="text-3xl font-bold">
 
