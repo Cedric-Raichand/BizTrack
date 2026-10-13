@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
 import { toast } from "react-toastify";
+import ThemeToggle from "../components/ThemeToggle";
 
 
 function Register() {
@@ -126,9 +127,11 @@ function Register() {
   return (
 
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <ThemeToggle className="fixed top-4 right-4 z-10 bg-white shadow" />
 
 
-      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+
+      <div className="w-full max-w-md bg-white p-5 sm:p-8 rounded-xl shadow-lg">
 
 
         <h1 className="text-3xl font-bold text-center text-blue-600 mb-2">
