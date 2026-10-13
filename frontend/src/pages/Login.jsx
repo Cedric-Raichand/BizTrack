@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import API from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import ThemeToggle from "../components/ThemeToggle";
 
 
 function Login() {
@@ -148,10 +149,12 @@ function Login() {
   return (
 
 
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-8">
+        <ThemeToggle className="fixed top-4 right-4 z-10 bg-white shadow" />
 
 
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+
+      <div className="bg-white shadow-xl rounded-2xl p-5 sm:p-8 w-full max-w-md">
 
 
         <div className="text-center mb-8">
