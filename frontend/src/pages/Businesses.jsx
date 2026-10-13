@@ -49,7 +49,7 @@ function Businesses() {
 
 
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap justify-between items-center gap-3">
 
 
           <div>
@@ -109,7 +109,7 @@ function Businesses() {
         businesses.length === 0 ? (
 
 
-          <div className="bg-white rounded-xl shadow p-8 text-center">
+          <div className="bg-white rounded-xl shadow p-5 sm:p-8 text-center">
 
 
             <p className="text-gray-500 mb-4">
